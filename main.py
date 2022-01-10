@@ -74,9 +74,9 @@ class Test(BaseSelenium):
         if self.deployment == 1:
             self.dash.check_current_username()
             version = self.current_package_version()
-            if version == 3.9:
-                self.dash.check_db_engine()
-                self.dash.check_db_uptime()
+            # if version == 3.9:
+                # self.dash.check_db_engine()
+                # self.dash.check_db_uptime()
 
         self.dash.check_current_db()
         self.dash.check_db_status()
