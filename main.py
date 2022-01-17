@@ -503,9 +503,21 @@ class Test(BaseSelenium):
         self.service = ServicePage(self.driver)
         self.service.select_service_page()
         self.service.select_add_service_button()
+        # self.service.service_search_option('demo')
+        # self.service.service_search_option('tab')
+        # self.service.service_search_option('grafana')
+        self.service.service_category_option()
+        self.service.select_category_option_from_list('connector')
+        self.service.select_category_option_from_list('service')
+        self.service.select_category_option_from_list('geo')
+        self.service.select_category_option_from_list('demo')
+        self.service.select_category_option_from_list('graphql')
+        self.service.select_category_option_from_list('prometheus')
+        self.service.select_category_option_from_list('monitoring')
 
-        self.login.logout_button()
+        # self.login.logout_button()
         del self.login
+        del self.service
         return 'service'
 
     def test_user(self):
