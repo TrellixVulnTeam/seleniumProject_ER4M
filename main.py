@@ -6,11 +6,13 @@ from collectionPage import CollectionPage
 from dashboardPage import DashboardPage
 from databasePage import DatabasePage
 from graphPage import GraphPage
+from servicePage import ServicePage
 from loginPage import LoginPage
 from queryPage import QueryPage
 from supportPage import SupportPage
 from userPage import UserPage
 from viewsPage import ViewsPage
+
 
 # from selenium.common.exceptions import TimeoutException
 
@@ -492,6 +494,20 @@ class Test(BaseSelenium):
 
         return 'graph'
 
+    # testing Service page
+    def test_service(self):
+        print("Starting ", self.driver.title, "\n")
+        self.login = LoginPage(self.driver)
+        self.login.login('root', '')
+
+        self.service = ServicePage(self.driver)
+        self.service.select_service_page()
+        self.service.select_add_service_button()
+
+        self.login.logout_button()
+        del self.login
+        return 'service'
+
     def test_user(self):
         print("---------User Test Begin--------- \n")
         self.login = LoginPage(self.driver)
@@ -826,11 +842,12 @@ class Test(BaseSelenium):
 
 ui = Test()  # creating obj for the UI test
 # test_name = ui.test_login()  # testing Login functionality
-test_name = ui.test_dashboard()  # testing Dashboard functionality
+# test_name = ui.test_dashboard()  # testing Dashboard functionality
 # test_name = ui.test_collection()  # testing Collection tab
 # test_name = ui.test_views()  # testing views functionality
 # ui.test_query()  # testing query functionality **needs cluster deployment
 # test_name = ui.test_graph()  # testing graph functionality **needs cluster deployment
+test_name = ui.test_service()  # testing service page
 # test_name = ui.test_database()  # testing database page
 # test_name = ui.test_support()  # testing support tab functionality
 # ui.test_user()  # testing User functionality
