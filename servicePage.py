@@ -54,7 +54,6 @@ class ServicePage(BaseSelenium):
             search_item = '//*[@id="availableFoxxes"]/div[3]/div/div[1]/p[1]/span'
             expected_text = 'grafana-connector'
             demo_graphql_stiem = BaseSelenium.locator_finder_by_xpath(self, search_item)
-            # print(f'{demo_graphql_stiem}')
             assert demo_graphql_stiem.text == expected_text, f"Expected text{expected_text} " \
                                                              f"but got {demo_graphql_stiem.text}"
 
@@ -132,3 +131,96 @@ class ServicePage(BaseSelenium):
             connector_stiem.click()
             time.sleep(1)
             connector_stiem.click()
+
+    def select_category_option_search_filter(self, keyword):
+        """checking service page category option's filter option"""
+        filter_placeholder = 'Category-filter'
+        filter_placeholder_sitem = BaseSelenium.locator_finder_by_id(self, filter_placeholder)
+        filter_placeholder_sitem.click()
+        filter_placeholder_sitem.clear()
+        filter_placeholder_sitem.send_keys(keyword)
+        time.sleep(1)
+
+        if keyword == 'geo':
+            search_category = '//*[@id="geo-option"]/span[3]'
+            search_category_sitem = BaseSelenium.locator_finder_by_xpath(self, search_category)
+            expected_text = 'geo'
+            assert search_category_sitem.text == expected_text, f"Expected text{expected_text} " \
+                                                                f"but got {search_category_sitem.text}"
+
+        if keyword == 'demo':
+            search_category = '//*[@id="demo-option"]/span[3]'
+            search_category_sitem = BaseSelenium.locator_finder_by_xpath(self, search_category)
+            expected_text = 'demo'
+            assert search_category_sitem.text == expected_text, f"Expected text{expected_text} " \
+                                                                f"but got {search_category_sitem.text}"
+
+        if keyword == 'connector':
+            search_category = '//*[@id="connector-option"]/span[3]'
+            search_category_sitem = BaseSelenium.locator_finder_by_xpath(self, search_category)
+            expected_text = 'connector'
+            assert search_category_sitem.text == expected_text, f"Expected text{expected_text} " \
+                                                                f"but got {search_category_sitem.text}"
+
+    def select_demo_geo_s2_service(self):
+        """Selecting demo geo s2 service from the list"""
+        print('Selecting demo_geo_s2 service \n')
+        geo_service = '//*[@id="availableFoxxes"]/div[1]/div/div[3]'
+        geo_service_sitem = BaseSelenium.locator_finder_by_xpath(self, geo_service)
+        geo_service_sitem.click()
+        time.sleep(2)
+
+    def check_demo_geo_s2_service(self):
+        """checking general stuff of demo_geo_s2 service"""
+        self.select_demo_geo_s2_service()
+        github_link = '//*[@id="information"]/div/div[2]/div[1]/p[3]/span[2]/a'
+        github_link_sitem = BaseSelenium.locator_finder_by_xpath(self, github_link)
+        page_title = super().switch_tab(github_link_sitem)
+
+        expected_title = 'GitHub - arangodb-foxx/demo-geo-s2: A Foxx based geo ' \
+                         'example using the new (v3.4+) s2 geospatial index'
+
+        assert page_title == expected_title, f"Expected text{expected_title} but got {page_title}"
+        self.driver.back()
+
+    def install_demo_geo_s2_service(self, mount_path):
+        """Installing demo geo s2 service from the list"""
+        self.select_demo_geo_s2_service()
+
+        print('Installing demo_geo_s2 service \n')
+        service = 'installService'
+        service_sitem = BaseSelenium.locator_finder_by_id(self, service)
+        service_sitem.click()
+        time.sleep(2)
+
+        # select a mount point FIXME
+        print(f'Selecting service mount point at {mount_path} \n')
+        mount_point = 'new-app-mount'
+        mount_point_sitem = BaseSelenium.locator_finder_by_id(self, mount_point)
+        mount_point_sitem.click()
+        mount_point_sitem.clear()
+        mount_point_sitem.send_keys(mount_path)
+
+        # selecting install button
+        print('Selecting install button \n')
+        install_btn = 'modalButton1'
+        install_btn_sitem = BaseSelenium.locator_finder_by_id(self, install_btn)
+        install_btn_sitem.click()
+        time.sleep(5)
+
+        # checking service has been created successfully
+        success = '//*[@id="installedList"]/div[2]/div/div[1]/p[2]/span'
+
+        try:
+            success_sitem = BaseSelenium.locator_finder_by_xpath(self, success).text
+            if success_sitem == 'demo-geo-s2':
+                print(f"{success_sitem} has been successfully created \n")
+            else:
+                print('Could not locate the desired service! refreshing the UI \n')
+                self.driver.refresh()
+                time.sleep(1)
+                success_sitem = BaseSelenium.locator_finder_by_xpath(self, success).text
+                if success_sitem == 'demo-geo-s2':
+                    print(f"{success_sitem} has been successfully created \n")
+        except Exception:
+            raise Exception('Failed to create the service!!')

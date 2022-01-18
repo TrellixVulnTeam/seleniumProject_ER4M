@@ -48,7 +48,7 @@ class Test(BaseSelenium):
         # log.logout_button()
         # del col
         # del log
-        print(collection_name_list)
+        print('xxxxxxxxxx', collection_name_list, 'xxxxxxxxxx')
         BaseSelenium.tear_down()
 
     # testing login page
@@ -506,14 +506,21 @@ class Test(BaseSelenium):
         # self.service.service_search_option('demo')
         # self.service.service_search_option('tab')
         # self.service.service_search_option('grafana')
-        self.service.service_category_option()
-        self.service.select_category_option_from_list('connector')
-        self.service.select_category_option_from_list('service')
-        self.service.select_category_option_from_list('geo')
-        self.service.select_category_option_from_list('demo')
-        self.service.select_category_option_from_list('graphql')
-        self.service.select_category_option_from_list('prometheus')
-        self.service.select_category_option_from_list('monitoring')
+        # self.service.service_category_option()
+        # self.service.select_category_option_from_list('connector')
+        # self.service.select_category_option_from_list('service')
+        # self.service.select_category_option_from_list('geo')
+        # self.service.select_category_option_from_list('demo')
+        # self.service.select_category_option_from_list('graphql')
+        # self.service.select_category_option_from_list('prometheus')
+        # self.service.select_category_option_from_list('monitoring')
+        # self.service.service_category_option()
+        # self.service.select_category_option_search_filter('geo')
+        # self.service.select_category_option_search_filter('demo')
+        # self.service.select_category_option_search_filter('connector')
+
+        # self.service.check_demo_geo_s2_service()
+        self.service.install_demo_geo_s2_service('/Desktop')
 
         # self.login.logout_button()
         del self.login
