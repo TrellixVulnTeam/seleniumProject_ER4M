@@ -170,7 +170,7 @@ class ServicePage(BaseSelenium):
         geo_service_sitem.click()
         time.sleep(2)
 
-    def check_demo_geo_s2_service(self):
+    def setup_demo_geo_s2_service(self):
         """checking general stuff of demo_geo_s2 service"""
         self.select_demo_geo_s2_service()
         github_link = '//*[@id="information"]/div/div[2]/div[1]/p[3]/span[2]/a'
@@ -267,7 +267,6 @@ class ServicePage(BaseSelenium):
                 restaurants_collection = '//*[@id="collection_restaurants"]/div/h5'
                 restaurants_collection_sitem = BaseSelenium.locator_finder_by_xpath(self, restaurants_collection)
                 time.sleep(1)
-                print('I am here-> ', restaurants_collection_sitem.text)
 
                 if restaurants_collection_sitem.text == 'restaurants':
                     print('open it and populate necessary data into it \n')
@@ -288,6 +287,55 @@ class ServicePage(BaseSelenium):
                     confirm_btn = 'confirmDocImport'
                     BaseSelenium.locator_finder_by_id(self, confirm_btn).click()
                     time.sleep(1)
+
+                    self.select_service_page()
+                    self.driver.refresh()
+
+                    print('Selecting demo_geo_s2 service \n')
+                    select_service = '//*[@id="installedList"]/div[2]/div/div[3]/span/div'
+                    BaseSelenium.locator_finder_by_xpath(self, select_service).click()
+                    time.sleep(1)
+                    print('inspecting demo_geo_s2 service interface \n')
+                    geo_service = '//*[@id="information"]/div/div[2]/div[2]/input'
+                    BaseSelenium.locator_finder_by_xpath(self, geo_service).click()
+                    time.sleep(4)
+
+                    print('Switching interface tab \n')
+                    self.driver.switch_to.window(self.driver.window_handles[1])
+
+                    # inspecting from the service interface started here
+                    print('Visualize random Restaurant \n')
+                    random_restaurant = 'randomRestaurant'
+                    BaseSelenium.locator_finder_by_id(self, random_restaurant).click()
+                    time.sleep(3)
+
+                    print('Visualize random Neighborhood \n')
+                    random_neighborhood = 'randomNeighborhood'
+                    BaseSelenium.locator_finder_by_id(self, random_neighborhood).click()
+                    time.sleep(3)
+
+                    print('Visualize Distance \n')
+                    distance = 'geoDistance'
+                    BaseSelenium.locator_finder_by_id(self, distance).click()
+                    time.sleep(3)
+
+                    print('Visualize Distance between \n')
+                    distance_between = 'geoDistanceBetween'
+                    BaseSelenium.locator_finder_by_id(self, distance_between).click()
+                    time.sleep(3)
+
+                    print('Visualize Geo distance nearest \n')
+                    distance_nearest = 'geoDistanceNearest'
+                    BaseSelenium.locator_finder_by_id(self, distance_nearest).click()
+                    time.sleep(3)
+
+                    print('Visualize Geo intersection \n')
+                    intersection = 'geoIntersection'
+                    BaseSelenium.locator_finder_by_id(self, intersection).click()
+                    time.sleep(3)
+
+                    print('Switching back to original window \n')
+                    self.driver.switch_to.window(self.driver.window_handles[0])
 
                 else:
                     raise Exception('restaurants Collection not found!')

@@ -519,7 +519,7 @@ class Test(BaseSelenium):
         # self.service.select_category_option_search_filter('demo')
         # self.service.select_category_option_search_filter('connector')
 
-        # self.service.check_demo_geo_s2_service()
+        # self.service.setup_demo_geo_s2_service()
         self.service.install_demo_geo_s2_service('/Desktop')
 
         # self.login.logout_button()
