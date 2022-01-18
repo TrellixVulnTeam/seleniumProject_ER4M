@@ -215,6 +215,7 @@ class ServicePage(BaseSelenium):
             success_sitem = BaseSelenium.locator_finder_by_xpath(self, success).text
             if success_sitem == 'demo-geo-s2':
                 print(f"{success_sitem} has been successfully created \n")
+                status = True
             else:
                 print('Could not locate the desired service! refreshing the UI \n')
                 self.driver.refresh()
@@ -222,5 +223,74 @@ class ServicePage(BaseSelenium):
                 success_sitem = BaseSelenium.locator_finder_by_xpath(self, success).text
                 if success_sitem == 'demo-geo-s2':
                     print(f"{success_sitem} has been successfully created \n")
+                    status = True
+                else:
+                    status = False
+
+            # populating collections with necessary data
+            if status:
+                # got to collection tab
+                collection_page = 'collections'
+                BaseSelenium.locator_finder_by_id(self, collection_page).click()
+
+                # looking for default collection has been created or not
+                neighbourhood_collection = '//*[@id="collection_neighborhoods"]/div/h5'
+                neighbourhoods_collection_sitem = BaseSelenium.locator_finder_by_xpath(self, neighbourhood_collection)
+
+                if neighbourhoods_collection_sitem.text == 'neighborhoods':
+                    print('open it and populate necessary data into it \n')
+                    neighbourhoods_collection_sitem.click()
+                    print('select upload button \n')
+                    upload = '//*[@id="importCollection"]/span/i'
+                    BaseSelenium.locator_finder_by_xpath(self, upload).click()
+                    time.sleep(1)
+
+                    path = 'C:\\Users\\rearf\\Desktop\\collections\\geo_s2_collections\\neighborhoods.json'
+                    print(f'Providing neighborhood collection path {path} \n')
+                    choose_file_btn = 'importDocuments'
+                    choose_file_btn_sitem = BaseSelenium.locator_finder_by_id(self, choose_file_btn)
+                    choose_file_btn_sitem.send_keys(path)
+                    time.sleep(1)
+
+                    print('Pressing on confirm btn \n')
+                    confirm_btn = 'confirmDocImport'
+                    BaseSelenium.locator_finder_by_id(self, confirm_btn).click()
+                    time.sleep(1)
+                    # going back to collection tab
+                    self.driver.back()
+
+                else:
+                    raise Exception('neighbourhood Collection not found!')
+
+                    # looking for restaurants collection has been created or not
+
+                restaurants_collection = '//*[@id="collection_restaurants"]/div/h5'
+                restaurants_collection_sitem = BaseSelenium.locator_finder_by_xpath(self, restaurants_collection)
+                time.sleep(1)
+                print('I am here-> ', restaurants_collection_sitem.text)
+
+                if restaurants_collection_sitem.text == 'restaurants':
+                    print('open it and populate necessary data into it \n')
+                    restaurants_collection_sitem.click()
+                    print('select upload button \n')
+                    upload = '//*[@id="importCollection"]/span/i'
+                    BaseSelenium.locator_finder_by_xpath(self, upload).click()
+                    time.sleep(1)
+
+                    path = 'C:\\Users\\rearf\\Desktop\\collections\\geo_s2_collections\\restaurants.json'
+                    print(f'Providing restaurants collection path {path} \n')
+                    choose_file_btn = 'importDocuments'
+                    choose_file_btn_sitem = BaseSelenium.locator_finder_by_id(self, choose_file_btn)
+                    choose_file_btn_sitem.send_keys(path)
+                    time.sleep(1)
+
+                    print('Pressing on confirm btn \n')
+                    confirm_btn = 'confirmDocImport'
+                    BaseSelenium.locator_finder_by_id(self, confirm_btn).click()
+                    time.sleep(1)
+
+                else:
+                    raise Exception('restaurants Collection not found!')
+
         except Exception:
             raise Exception('Failed to create the service!!')
