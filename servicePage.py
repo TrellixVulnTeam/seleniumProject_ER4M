@@ -295,6 +295,7 @@ class ServicePage(BaseSelenium):
                     select_service = '//*[@id="installedList"]/div[2]/div/div[3]/span/div'
                     BaseSelenium.locator_finder_by_xpath(self, select_service).click()
                     time.sleep(1)
+
                     print('inspecting demo_geo_s2 service interface \n')
                     geo_service = '//*[@id="information"]/div/div[2]/div[2]/input'
                     BaseSelenium.locator_finder_by_xpath(self, geo_service).click()
@@ -342,3 +343,72 @@ class ServicePage(BaseSelenium):
 
         except Exception:
             raise Exception('Failed to create the service!!')
+
+    def check_demo_geo_s2_service_api(self):
+        """Checking demo_geo_s2 service's API"""
+        self.select_service_page()
+
+        print('Selecting demo_geo_s2 service \n')
+        select_service = '//*[@id="installedList"]/div[2]/div/div[3]/span/div'
+        BaseSelenium.locator_finder_by_xpath(self, select_service).click()
+        time.sleep(1)
+
+        print('Selecting service API \n')
+        api = 'service-api'
+        BaseSelenium.locator_finder_by_id(self, api).click()
+        time.sleep(2)
+
+        print("Changing view to JSON form \n")
+        json = 'jsonLink'
+        BaseSelenium.locator_finder_by_id(self, json).click()
+        time.sleep(3)
+
+        print('get back to swagger view \n')
+        json = 'jsonLink'
+        BaseSelenium.locator_finder_by_id(self, json).click()
+
+    def checking_function_for_fox_leaflet(self, id_list):
+        """this method will take list and check according to that list"""
+        print(f'There are total {len(id_list)} Foxx leaflets \n')
+        i = 0
+        while i < len(id_list):
+            print(f'Checking Foxx leaflet number {i}\n')
+            BaseSelenium.locator_finder_by_xpath(self, id_list[i]).click()
+            time.sleep(2)
+            BaseSelenium.locator_finder_by_xpath(self, id_list[i]).click()
+
+            i = i + 1
+            if i == len(id_list):
+                print('Checking Foxx leaflets finished \n')
+            time.sleep(2)
+
+    def inspect_foxx_leaflet_iframe(self):
+        """Checking iframe elements of foxx and leaflets"""
+        print('Switching to IFrame \n')
+        iframe_id = 'swaggerIframe'
+        self.driver.switch_to.frame(BaseSelenium.locator_finder_by_id(self, iframe_id))
+        time.sleep(1)
+
+        print("Checking default view \n")
+        default_view = "operations-tag-default"
+        BaseSelenium.locator_finder_by_id(self, default_view).click()
+        time.sleep(2)
+        BaseSelenium.locator_finder_by_id(self, default_view).click()
+
+        print('inspecting documentation through Foxx and leaflet \n')
+        first = '//*[@id="operations-default-GET_restaurants"]/div/span[1]'
+        second = '//*[@id="operations-default-GET_neighborhoods"]/div/span[1]'
+        third = '//*[@id="operations-default-GET_pointsInNeighborhood_id"]/div/span[1]'
+        fourth = '//*[@id="operations-default-GET_geoContainsBenchmark_count"]/div/span[1]'
+        fifth = '//*[@id="operations-default-GET_geoIntersection"]/div/span[1]'
+        sixth = '//*[@id="operations-default-GET_geoDistanceNearest"]/div/span[1]'
+        seventh = '//*[@id="operations-default-GET_geoDistanceBetween"]/div/span[1]'
+        eighth = '//*[@id="operations-default-GET_geoDistance"]/div/span[1]'
+        ninth = '//*[@id="operations-default-GET_geoDistanceBenchmark_count"]/div/span[1]'
+        tenth = '//*[@id="operations-default-GET_geoNearBenchmark_count"]/div/span[1]'
+
+        id_list = [first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth]
+        self.checking_function_for_fox_leaflet(id_list)
+
+        # self.driver.switch_to.default_content()
+        # time.sleep(1)
