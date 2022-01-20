@@ -135,6 +135,8 @@ class Test(BaseSelenium):
         self.col.checking_search_options("Test")
         self.driver.refresh()
 
+        self.col.select_collection_page()
+
         print("Selecting Settings\n")
         self.col.select_collection_settings()
         print("Displaying system's collection\n")
@@ -826,6 +828,7 @@ class Test(BaseSelenium):
         del self.query
         del self.query01
         print("---------Checking Query completed--------- \n")
+        return 'query_test'
 
     def test_support(self):
         print("---------Checking Support page started--------- \n")
@@ -865,11 +868,11 @@ class Test(BaseSelenium):
 ui = Test()  # creating obj for the UI test
 # test_name = ui.test_login()  # testing Login functionality
 # test_name = ui.test_dashboard()  # testing Dashboard functionality
-# test_name = ui.test_collection()  # testing Collection tab
+test_name = ui.test_collection()  # testing Collection tab
 # test_name = ui.test_views()  # testing views functionality
-# ui.test_query()  # testing query functionality **needs cluster deployment
+# test_name = ui.test_query()  # testing query functionality **needs cluster deployment
 # test_name = ui.test_graph()  # testing graph functionality **needs cluster deployment
-test_name = ui.test_service()  # testing service page
+# test_name = ui.test_service()  # testing service page
 # test_name = ui.test_database()  # testing database page
 # test_name = ui.test_support()  # testing support tab functionality
 # ui.test_user()  # testing User functionality

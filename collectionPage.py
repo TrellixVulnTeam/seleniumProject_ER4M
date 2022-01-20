@@ -32,6 +32,7 @@ class CollectionPage(BaseSelenium):
         self.sort_by_name_id = '//*[@id="collectionsDropdown"]/ul[2]/li[2]/a/label/i'
         self.sort_by_type_id = '//*[@id="collectionsDropdown"]/ul[2]/li[3]/a/label/i'
         self.sort_descending_id = '//*[@id="collectionsDropdown"]/ul[2]/li[4]/a/label/i'
+        self.sort_descending_id = '//*[@id="collectionsDropdown"]/ul[3]/li[4]/a/label'
 
         self.select_doc_collection_id = "//div[@id='collection_TestDoc']//h5[@class='collectionName']"
 
@@ -93,9 +94,17 @@ class CollectionPage(BaseSelenium):
         self.select_schema_tab_id = "//*[@id='subNavigationBar']/ul[2]/li[5]/a"
 
         self.select_settings_tab_id = "//*[@id='subNavigationBar']/ul[2]/li[4]/a"
-        self.select_settings_name_textbox_id = "change-collection-name"
+
+        # fixme found two elements with this id for the version 3.8.5e
+        # self.select_settings_name_textbox_id = "change-collection-name"
+
+        self.select_settings_name_textbox_id = '/html/body/div[2]/div/div[2]/div[2]/div/div[1]/div/' \
+                                               'div[1]/table/tbody/tr[1]/th[2]/input'
+
         self.select_settings_wait_type_id = "change-collection-sync"
-        self.select_new_settings_save_btn_id = "modalButton4"
+        # fixme modalbutton get changed to modalbutton5 in 3.8.5e
+        # self.select_new_settings_save_btn_id = "modalButton4"
+        self.select_new_settings_save_btn_id = "modalButton5"
 
         self.select_load_index_into_memory_id = "//*[@id='modalButton2']"
         self.select_settings_unload_btn_id = "//*[@id='modalButton3']"
@@ -301,19 +310,36 @@ class CollectionPage(BaseSelenium):
 
     # Sorting collection by type
     def sort_by_type(self):
-        sort_by_type_sitem = BaseSelenium.locator_finder_by_xpath(self, self.sort_by_type_id)
+        version = super().current_package_version()
+        if version == 3.8:
+            sort_by_type = '//*[@id="collectionsDropdown"]/ul[3]/li[3]/a/label'
+            sort_by_type_sitem = BaseSelenium.locator_finder_by_xpath(self, sort_by_type)
+        else:
+            sort_by_type_sitem = BaseSelenium.locator_finder_by_xpath(self, self.sort_by_type_id)
+
         sort_by_type_sitem.click()
         time.sleep(2)
 
     def sort_descending(self):
         """Sorting collection by descending"""
-        sort_descending_sitem = BaseSelenium.locator_finder_by_xpath(self, self.sort_descending_id)
+        sort_by_descending = '//*[@id="collectionsDropdown"]/ul[3]/li[4]/a/label/i'
+        version = super().current_package_version()
+        if version == 3.8:
+            sort_by_descending = '//*[@id="collectionsDropdown"]/ul[3]/li[4]/a/label/i'
+            sort_descending_sitem = BaseSelenium.locator_finder_by_xpath(self, sort_by_descending)
+        else:
+            sort_descending_sitem = BaseSelenium.locator_finder_by_xpath(self, self.sort_descending_id)
         sort_descending_sitem.click()
         time.sleep(2)
 
     def sort_by_name(self):
         """Sorting collection by name"""
-        sort_by_name_sitem = BaseSelenium.locator_finder_by_xpath(self, self.sort_by_name_id)
+        version = super().current_package_version()
+        if version == 3.8:
+            name = '//*[@id="collectionsDropdown"]/ul[3]/li[2]/a/label'
+            sort_by_name_sitem = BaseSelenium.locator_finder_by_xpath(self, name)
+        else:
+            sort_by_name_sitem = BaseSelenium.locator_finder_by_xpath(self, self.sort_by_name_id)
         sort_by_name_sitem.click()
         time.sleep(2)
 
@@ -599,7 +625,7 @@ class CollectionPage(BaseSelenium):
     # Selecting settings tab from the collection submenu
     def rename_collection(self):
         select_settings_name_textbox_sitem = \
-            BaseSelenium.locator_finder_by_id(self, self.select_settings_name_textbox_id)
+            BaseSelenium.locator_finder_by_xpath(self, self.select_settings_name_textbox_id)
         select_settings_name_textbox_sitem.click()
         select_settings_name_textbox_sitem.clear()
         select_settings_name_textbox_sitem.send_keys("testDocRenamed")
