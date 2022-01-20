@@ -172,6 +172,8 @@ class ServicePage(BaseSelenium):
 
     def setup_demo_geo_s2_service(self):
         """checking general stuff of demo_geo_s2 service"""
+        self.driver.refresh()
+        time.sleep(1)
         self.select_demo_geo_s2_service()
         github_link = '//*[@id="information"]/div/div[2]/div[1]/p[3]/span[2]/a'
         github_link_sitem = BaseSelenium.locator_finder_by_xpath(self, github_link)
@@ -410,5 +412,50 @@ class ServicePage(BaseSelenium):
         id_list = [first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth]
         self.checking_function_for_fox_leaflet(id_list)
 
-        # self.driver.switch_to.default_content()
-        # time.sleep(1)
+        print('Getting out of IFrame \n')
+        self.driver.switch_to.default_content()
+        time.sleep(1)
+
+    def select_service_settings(self):
+        """Selecting service settings tab"""
+        print('Selecting settings options \n')
+        settings = 'service-settings'
+        BaseSelenium.locator_finder_by_id(self, settings).click()
+
+    def delete_service(self, service_name):
+        """Delete all the services"""
+        self.select_service_page()
+
+        if service_name == 'demo_geo_s2':
+
+            try:
+                # try to determine service has already been created
+                service = '//*[@id="installedList"]/div[2]/div/div[1]/p[2]/span'
+                service_sitem = BaseSelenium.locator_finder_by_xpath(self, service).text
+                time.sleep(1)
+
+                if service_sitem == 'demo-geo-s2':
+                    print(f'{service_sitem} service has been found and ready to delete \n')
+                    BaseSelenium.locator_finder_by_xpath(self, service).click()
+                    time.sleep(1)
+                    # move to settings tab
+                    self.select_service_settings()
+                    time.sleep(1)
+
+                    delete_service = '//*[@id="settings"]/div/button[1]'
+                    BaseSelenium.locator_finder_by_xpath(self, delete_service).click()
+                    time.sleep(1)
+
+                    confirm_delete = 'modalButton1'
+                    BaseSelenium.locator_finder_by_id(self, confirm_delete).click()
+                    time.sleep(1)
+
+                    pressing_yes = 'modal-confirm-delete'
+                    BaseSelenium.locator_finder_by_id(self, pressing_yes).click()
+                    time.sleep(1)
+
+                    self.driver.refresh()
+                    print(f'{service_sitem} service has been deleted successfully \n')
+
+            except Exception:
+                raise Exception(f'No service found named {service_name}')
