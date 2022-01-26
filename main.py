@@ -71,7 +71,7 @@ class Test(BaseSelenium):
             self.login.login('root', '')
         # creating object for dashboard
         self.dash = DashboardPage(self.driver)
-        self.dash.check_server_package_name()
+        # self.dash.check_server_package_name()
         self.dash.check_current_package_version()
         if self.deployment == 1:
             self.dash.check_current_username()
@@ -160,7 +160,7 @@ class Test(BaseSelenium):
         self.col.sort_descending()
         self.col.sort_descending()
         print("Sorting collections by name\n")
-        self.col.sort_by_name()
+        # self.col.sort_by_name()
 
         self.col.select_edge_collection_upload()
         print("Uploading file to the collection started\n")
@@ -618,8 +618,9 @@ class Test(BaseSelenium):
         db.create_new_db('Sharded', 0, self.deployment)  # 0 = sharded DB
         db.create_new_db('OneShard', 1, self.deployment)  # 1 = one shard DB
 
-        db.test_database_expected_error(self.deployment)  # testing expected error condition for database creation
-
+        # db.test_database_expected_error(self.deployment)  # testing expected error condition for database creation
+        self.driver.back()
+        db.select_database_page()
         print('Checking sorting databases to ascending and descending \n')
         db.sorting_db()
 
@@ -871,11 +872,11 @@ ui = Test()  # creating obj for the UI test
 # test_name = ui.test_collection()  # testing Collection tab
 # test_name = ui.test_views()  # testing views functionality
 # test_name = ui.test_query()  # testing query functionality **needs cluster deployment
-test_name = ui.test_graph()  # testing graph functionality **needs cluster deployment
+# test_name = ui.test_graph()  # testing graph functionality **needs cluster deployment
 # test_name = ui.test_service()  # testing service page
-# test_name = ui.test_database()  # testing database page
+test_name = ui.test_database()  # testing database page
 # test_name = ui.test_support()  # testing support tab functionality
 # test_name = ui.test_user()  # testing User functionality
-test_name = ui.test_analyzers()  # testing analyzers page  # supports only 3.9* versions
+# test_name = ui.test_analyzers()  # testing analyzers page  # supports only 3.9* versions
 
 ui.teardown(test_name)  # close the driver and quit
