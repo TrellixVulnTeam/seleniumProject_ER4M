@@ -76,9 +76,9 @@ class Test(BaseSelenium):
         if self.deployment == 1:
             self.dash.check_current_username()
             version = self.current_package_version()
-            if version == 3.9:
-                self.dash.check_db_engine()
-                self.dash.check_db_uptime()
+            # if version == 3.9:
+            #     self.dash.check_db_engine()
+            #     self.dash.check_db_uptime()
 
         self.dash.check_current_db()
         self.dash.check_db_status()
@@ -157,8 +157,8 @@ class Test(BaseSelenium):
         print("Sorting collections by type\n")
         self.col.sort_by_type()
         print("Sorting collections by descending\n")
-        self.col.sort_descending()
-        self.col.sort_descending()
+        # self.col.sort_descending()
+        # self.col.sort_descending()
         print("Sorting collections by name\n")
         # self.col.sort_by_name()
 
@@ -403,71 +403,73 @@ class Test(BaseSelenium):
         # print("Adding Disjoint Smart Graph started \n")
         # self.graph01.adding_smart_graph(True)
 
-        print("Example Graphs creation started\n")
-        print("Creating Knows Graph\n")
-        self.graph1.select_create_graph(1)
-        self.driver.refresh()
-        print("Checking required collections created for Knows Graph\n")
-        self.graph1.checking_collection_creation(1)
-        print("Searching for 'knows' and 'persons' collections\n")
-        self.graph1.check_required_collection(1)
+        # print("Example Graphs creation started\n")
+        # print("Creating Knows Graph\n")
+        # self.graph1.select_create_graph(1)
+        # self.driver.refresh()
+        # print("Checking required collections created for Knows Graph\n")
+        # self.graph1.checking_collection_creation(1)
+        # print("Searching for 'knows' and 'persons' collections\n")
+        # self.graph1.check_required_collection(1)
+        #
+        # print("Creating Traversal Graph\n")
+        # self.graph2.select_create_graph(2)
+        # self.driver.refresh()
+        # print("Checking required collections created for Traversal Graph\n")
+        # self.graph2.checking_collection_creation(2)
+        # print("Searching for 'circles' and 'edges' collections\n")
+        # self.graph2.check_required_collection(2)
+        #
+        # print("Creating K Shortest Path Graph\n")
+        # self.graph3.select_create_graph(3)
+        # self.driver.refresh()
+        # print("Checking required collections created for K Shortest Path Graph\n")
+        # self.graph3.checking_collection_creation(3)
+        # print("Searching for 'connections' and 'places' collections\n")
+        # self.graph3.check_required_collection(3)
+        #
+        # print("Creating Mps Graph\n")
+        # self.graph4.select_create_graph(4)
+        # self.driver.refresh()
+        # print("Checking required collections created for Mps Graph\n")
+        # self.graph4.checking_collection_creation(4)
+        # print("Searching for 'mps_edges' and 'mps_verts' collections\n")
+        # self.graph4.check_required_collection(4)
+        #
+        # print("Creating World Graph\n")
+        # self.graph5.select_create_graph(5)
+        # self.driver.refresh()
+        # print("Checking required collections created for World Graph\n")
+        # self.graph5.checking_collection_creation(5)
+        # print("Searching for 'worldEdges' and 'worldvertices' collections\n")
+        # self.graph5.check_required_collection(5)
+        #
+        # print("Creating Social Graph\n")
+        # self.graph6.select_create_graph(6)
+        # self.driver.refresh()
+        # print("Checking required collections created for Social Graph\n")
+        # self.graph6.checking_collection_creation(6)
+        # print("Searching for 'female' , 'male' and 'relation' collections\n")
+        # self.graph6.check_required_collection(6)
+        #
+        # print("Creating City Graph\n")
+        # self.graph7.select_create_graph(7)
+        # self.driver.refresh()
+        # print("Checking required collections created for City Graph\n")
+        # self.graph7.checking_collection_creation(7)
+        # print("Searching for 'frenchCity' , 'frenchHighway' 'germanCity', 'germanHighway' & 'internationalHighway'\n")
+        # self.graph7.check_required_collection(7)
+        # print("Example Graphs creation Completed\n")
+        #
+        # print("Sorting all graphs as descending\n")
+        # self.graph.select_sort_descend()
+        #
+        # print("Selecting Knows Graph for inspection\n")
+        # # self.graph.inspect_knows_graph()
+        # print("Selecting Graphs settings menu\n")
+        # # self.graph.graph_setting()
 
-        print("Creating Traversal Graph\n")
-        self.graph2.select_create_graph(2)
-        self.driver.refresh()
-        print("Checking required collections created for Traversal Graph\n")
-        self.graph2.checking_collection_creation(2)
-        print("Searching for 'circles' and 'edges' collections\n")
-        self.graph2.check_required_collection(2)
-
-        print("Creating K Shortest Path Graph\n")
-        self.graph3.select_create_graph(3)
-        self.driver.refresh()
-        print("Checking required collections created for K Shortest Path Graph\n")
-        self.graph3.checking_collection_creation(3)
-        print("Searching for 'connections' and 'places' collections\n")
-        self.graph3.check_required_collection(3)
-
-        print("Creating Mps Graph\n")
-        self.graph4.select_create_graph(4)
-        self.driver.refresh()
-        print("Checking required collections created for Mps Graph\n")
-        self.graph4.checking_collection_creation(4)
-        print("Searching for 'mps_edges' and 'mps_verts' collections\n")
-        self.graph4.check_required_collection(4)
-
-        print("Creating World Graph\n")
-        self.graph5.select_create_graph(5)
-        self.driver.refresh()
-        print("Checking required collections created for World Graph\n")
-        self.graph5.checking_collection_creation(5)
-        print("Searching for 'worldEdges' and 'worldvertices' collections\n")
-        self.graph5.check_required_collection(5)
-
-        print("Creating Social Graph\n")
-        self.graph6.select_create_graph(6)
-        self.driver.refresh()
-        print("Checking required collections created for Social Graph\n")
-        self.graph6.checking_collection_creation(6)
-        print("Searching for 'female' , 'male' and 'relation' collections\n")
-        self.graph6.check_required_collection(6)
-
-        print("Creating City Graph\n")
-        self.graph7.select_create_graph(7)
-        self.driver.refresh()
-        print("Checking required collections created for City Graph\n")
-        self.graph7.checking_collection_creation(7)
-        print("Searching for 'frenchCity' , 'frenchHighway' 'germanCity', 'germanHighway' & 'internationalHighway'\n")
-        self.graph7.check_required_collection(7)
-        print("Example Graphs creation Completed\n")
-
-        print("Sorting all graphs as descending\n")
-        self.graph.select_sort_descend()
-
-        print("Selecting Knows Graph for inspection\n")
-        self.graph.inspect_knows_graph()
-        print("Selecting Graphs settings menu\n")
-        # self.graph.graph_setting()
+        self.graph.select_graph_page()
 
         print("Deleting created Graphs started\n")
         self.graph1.delete_graph(1)
@@ -522,11 +524,14 @@ class Test(BaseSelenium):
         self.service.select_category_option_search_filter('connector')
 
         self.service.setup_demo_geo_s2_service()
-        self.service.install_demo_geo_s2_service('/Desktop')
+        self.service.install_demo_geo_s2_service('/geo')
         self.service.check_demo_geo_s2_service_api()
-        self.service.inspect_foxx_leaflet_iframe()
+        self.service.inspect_demo_geo_foxx_leaflet_iframe()
+
+        self.service.install_demo_graph_hql_service('/graphql')
 
         self.service.delete_service('demo_geo_s2')
+        self.service.delete_service('graphql')
 
         del self.login
         del self.service
@@ -870,13 +875,13 @@ ui = Test()  # creating obj for the UI test
 # test_name = ui.test_login()  # testing Login functionality
 # test_name = ui.test_dashboard()  # testing Dashboard functionality
 # test_name = ui.test_collection()  # testing Collection tab
-# test_name = ui.test_views()  # testing views functionality
+test_name = ui.test_views()  # testing views functionality
 # test_name = ui.test_query()  # testing query functionality **needs cluster deployment
 # test_name = ui.test_graph()  # testing graph functionality **needs cluster deployment
 # test_name = ui.test_service()  # testing service page
-test_name = ui.test_database()  # testing database page
+# test_name = ui.test_database()  # testing database page
 # test_name = ui.test_support()  # testing support tab functionality
 # test_name = ui.test_user()  # testing User functionality
-# test_name = ui.test_analyzers()  # testing analyzers page  # supports only 3.9* versions
+# test_name = ui.test_analyzers()  # testing analyzers p1age  # supports only 3.9* versions
 
 ui.teardown(test_name)  # close the driver and quit
