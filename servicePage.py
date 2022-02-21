@@ -12,21 +12,21 @@ class ServicePage(BaseSelenium):
     def select_service_page(self):
         """Selecting service page"""
         service = self.service_page
-        service_sitem = BaseSelenium.locator_finder_by_id(self, service)
+        service_sitem = self.locator_finder_by_id(service)
         service_sitem.click()
         time.sleep(2)
 
     def select_add_service_button(self):
         """selecting new service button"""
         add_new_service = 'addApp'
-        add_new_service_stiem = BaseSelenium.locator_finder_by_id(self, add_new_service)
+        add_new_service_stiem = self.locator_finder_by_id(add_new_service)
         add_new_service_stiem.click()
         time.sleep(2)
 
     def service_search_option(self, search_keyword):
         """checking service page search options"""
         search = 'foxxSearch'
-        service_search_stiem = BaseSelenium.locator_finder_by_id(self, search)
+        service_search_stiem = self.locator_finder_by_id(search)
         service_search_stiem.click()
         service_search_stiem.clear()
         time.sleep(2)
@@ -39,21 +39,20 @@ class ServicePage(BaseSelenium):
         if search_keyword == 'demo':
             search_item = '//*[@id="availableFoxxes"]/div[2]/div/div[1]/p[1]/span'
             expected_text = 'demo-graphql'
-            demo_graphql_stiem = BaseSelenium.locator_finder_by_xpath(self, search_item)
-            # print(f'{demo_graphql_stiem}')
+            demo_graphql_stiem = self.locator_finder_by_xpath(search_item)
             assert demo_graphql_stiem.text == expected_text, f"Expected text{expected_text} " \
                                                              f"but got {demo_graphql_stiem.text}"
         if search_keyword == 'tab':
             search_item = '//*[@id="availableFoxxes"]/div[7]/div/div[1]/p[1]/span'
             expected_text = 'tableau-connector'
-            demo_graphql_stiem = BaseSelenium.locator_finder_by_xpath(self, search_item)
+            demo_graphql_stiem = self.locator_finder_by_xpath(search_item)
             # print(f'{demo_graphql_stiem}')
             assert demo_graphql_stiem.text == expected_text, f"Expected text{expected_text} " \
                                                              f"but got {demo_graphql_stiem.text}"
         if search_keyword == 'grafana':
             search_item = '//*[@id="availableFoxxes"]/div[3]/div/div[1]/p[1]/span'
             expected_text = 'grafana-connector'
-            demo_graphql_stiem = BaseSelenium.locator_finder_by_xpath(self, search_item)
+            demo_graphql_stiem = self.locator_finder_by_xpath(search_item)
             assert demo_graphql_stiem.text == expected_text, f"Expected text{expected_text} " \
                                                              f"but got {demo_graphql_stiem.text}"
 
@@ -62,14 +61,14 @@ class ServicePage(BaseSelenium):
         category = 'categorySelection'
 
         print('Selecting category options \n')
-        select_service_category_sitem = BaseSelenium.locator_finder_by_id(self, category)
+        select_service_category_sitem = self.locator_finder_by_id(category)
         select_service_category_sitem.click()
         time.sleep(1)
 
     def service_filter_category_option(self):
         """selecting category search option"""
         filter_option = 'Category-filter'
-        filter_option_stiem = BaseSelenium.locator_finder_by_xpath(self, filter_option)
+        filter_option_stiem = self.locator_finder_by_xpath(filter_option)
         filter_option_stiem.click()
         filter_option_stiem.clear()
         time.sleep(1)
@@ -79,7 +78,7 @@ class ServicePage(BaseSelenium):
         if category == 'connector':
             print(f'Selecting {category} category from the drop-down menu \n')
             connector_name = '//*[@id="connector-option"]/span[3]'
-            connector_stiem = BaseSelenium.locator_finder_by_xpath(self, connector_name)
+            connector_stiem = self.locator_finder_by_xpath(connector_name)
             connector_stiem.click()
             time.sleep(1)
             connector_stiem.click()
@@ -87,7 +86,7 @@ class ServicePage(BaseSelenium):
         if category == 'service':
             print(f'Selecting {category} category from the drop-down menu \n')
             connector_name = '//*[@id="service-option"]/span[3]'
-            connector_stiem = BaseSelenium.locator_finder_by_xpath(self, connector_name)
+            connector_stiem = self.locator_finder_by_xpath(connector_name)
             connector_stiem.click()
             time.sleep(1)
             connector_stiem.click()
@@ -95,7 +94,7 @@ class ServicePage(BaseSelenium):
         if category == 'geo':
             print(f'Selecting {category} category from the drop-down menu \n')
             connector_name = '//*[@id="geo-option"]/span[3]'
-            connector_stiem = BaseSelenium.locator_finder_by_xpath(self, connector_name)
+            connector_stiem = self.locator_finder_by_xpath(connector_name)
             connector_stiem.click()
             time.sleep(1)
             connector_stiem.click()
@@ -103,7 +102,7 @@ class ServicePage(BaseSelenium):
         if category == 'demo':
             print(f'Selecting {category} category from the drop-down menu \n')
             connector_name = '//*[@id="demo-option"]/span[3]'
-            connector_stiem = BaseSelenium.locator_finder_by_xpath(self, connector_name)
+            connector_stiem = self.locator_finder_by_xpath(connector_name)
             connector_stiem.click()
             time.sleep(1)
             connector_stiem.click()
@@ -111,7 +110,7 @@ class ServicePage(BaseSelenium):
         if category == 'graphql':
             print(f'Selecting {category} category from the drop-down menu \n')
             connector_name = '//*[@id="graphql-option"]/span[3]'
-            connector_stiem = BaseSelenium.locator_finder_by_xpath(self, connector_name)
+            connector_stiem = self.locator_finder_by_xpath(connector_name)
             connector_stiem.click()
             time.sleep(1)
             connector_stiem.click()
@@ -119,7 +118,7 @@ class ServicePage(BaseSelenium):
         if category == 'prometheus':
             print(f'Selecting {category} category from the drop-down menu \n')
             connector_name = '//*[@id="prometheus-option"]/span[3]'
-            connector_stiem = BaseSelenium.locator_finder_by_xpath(self, connector_name)
+            connector_stiem = self.locator_finder_by_xpath(connector_name)
             connector_stiem.click()
             time.sleep(1)
             connector_stiem.click()
@@ -127,7 +126,7 @@ class ServicePage(BaseSelenium):
         if category == 'monitoring':
             print(f'Selecting {category} category from the drop-down menu \n')
             connector_name = '//*[@id="monitoring-option"]/span[3]'
-            connector_stiem = BaseSelenium.locator_finder_by_xpath(self, connector_name)
+            connector_stiem = self.locator_finder_by_xpath(connector_name)
             connector_stiem.click()
             time.sleep(1)
             connector_stiem.click()
@@ -135,7 +134,7 @@ class ServicePage(BaseSelenium):
     def select_category_option_search_filter(self, keyword):
         """checking service page category option's filter option"""
         filter_placeholder = 'Category-filter'
-        filter_placeholder_sitem = BaseSelenium.locator_finder_by_id(self, filter_placeholder)
+        filter_placeholder_sitem = self.locator_finder_by_id(filter_placeholder)
         filter_placeholder_sitem.click()
         filter_placeholder_sitem.clear()
         filter_placeholder_sitem.send_keys(keyword)
@@ -143,21 +142,21 @@ class ServicePage(BaseSelenium):
 
         if keyword == 'geo':
             search_category = '//*[@id="geo-option"]/span[3]'
-            search_category_sitem = BaseSelenium.locator_finder_by_xpath(self, search_category)
+            search_category_sitem = self.locator_finder_by_xpath(search_category)
             expected_text = 'geo'
             assert search_category_sitem.text == expected_text, f"Expected text{expected_text} " \
                                                                 f"but got {search_category_sitem.text}"
 
         if keyword == 'demo':
             search_category = '//*[@id="demo-option"]/span[3]'
-            search_category_sitem = BaseSelenium.locator_finder_by_xpath(self, search_category)
+            search_category_sitem = self.locator_finder_by_xpath(search_category)
             expected_text = 'demo'
             assert search_category_sitem.text == expected_text, f"Expected text{expected_text} " \
                                                                 f"but got {search_category_sitem.text}"
 
         if keyword == 'connector':
             search_category = '//*[@id="connector-option"]/span[3]'
-            search_category_sitem = BaseSelenium.locator_finder_by_xpath(self, search_category)
+            search_category_sitem = self.locator_finder_by_xpath(search_category)
             expected_text = 'connector'
             assert search_category_sitem.text == expected_text, f"Expected text{expected_text} " \
                                                                 f"but got {search_category_sitem.text}"
@@ -166,7 +165,7 @@ class ServicePage(BaseSelenium):
         """Selecting demo geo s2 service from the list"""
         print('Selecting demo_geo_s2 service \n')
         geo_service = '//*[@id="availableFoxxes"]/div[1]/div/div[3]'
-        geo_service_sitem = BaseSelenium.locator_finder_by_xpath(self, geo_service)
+        geo_service_sitem = self.locator_finder_by_xpath(geo_service)
         geo_service_sitem.click()
         time.sleep(2)
 
@@ -176,7 +175,7 @@ class ServicePage(BaseSelenium):
         time.sleep(1)
         self.select_demo_geo_s2_service()
         github_link = '//*[@id="information"]/div/div[2]/div[1]/p[3]/span[2]/a'
-        github_link_sitem = BaseSelenium.locator_finder_by_xpath(self, github_link)
+        github_link_sitem = self.locator_finder_by_xpath(github_link)
         page_title = super().switch_tab(github_link_sitem)
 
         expected_title = 'GitHub - arangodb-foxx/demo-geo-s2: A Foxx based geo ' \
@@ -191,14 +190,14 @@ class ServicePage(BaseSelenium):
 
         print('Installing demo_geo_s2 service \n')
         service = 'installService'
-        service_sitem = BaseSelenium.locator_finder_by_id(self, service)
+        service_sitem = self.locator_finder_by_id(service)
         service_sitem.click()
         time.sleep(2)
 
         # select a mount point FIXME
         print(f'Selecting service mount point at {mount_path} \n')
         mount_point = 'new-app-mount'
-        mount_point_sitem = BaseSelenium.locator_finder_by_id(self, mount_point)
+        mount_point_sitem = self.locator_finder_by_id(mount_point)
         mount_point_sitem.click()
         mount_point_sitem.clear()
         mount_point_sitem.send_keys(mount_path)
@@ -206,15 +205,15 @@ class ServicePage(BaseSelenium):
         # selecting install button
         print('Selecting install button \n')
         install_btn = 'modalButton1'
-        install_btn_sitem = BaseSelenium.locator_finder_by_id(self, install_btn)
+        install_btn_sitem = self.locator_finder_by_id(install_btn)
         install_btn_sitem.click()
         time.sleep(5)
 
         # checking service has been created successfully
-        success = '//*[@id="installedList"]/div[2]/div/div[1]/p[2]/span'
+        success = "//*[text()='demo-geo-s2']"
 
         try:
-            success_sitem = BaseSelenium.locator_finder_by_xpath(self, success).text
+            success_sitem = self.locator_finder_by_xpath(success).text
             if success_sitem == 'demo-geo-s2':
                 print(f"{success_sitem} has been successfully created \n")
                 status = True
@@ -222,7 +221,7 @@ class ServicePage(BaseSelenium):
                 print('Could not locate the desired service! refreshing the UI \n')
                 self.driver.refresh()
                 time.sleep(1)
-                success_sitem = BaseSelenium.locator_finder_by_xpath(self, success).text
+                success_sitem = self.locator_finder_by_xpath(success).text
                 if success_sitem == 'demo-geo-s2':
                     print(f"{success_sitem} has been successfully created \n")
                     status = True
@@ -231,32 +230,33 @@ class ServicePage(BaseSelenium):
 
             # populating collections with necessary data
             if status:
+                print("status: ", status)
                 # got to collection tab
                 collection_page = 'collections'
-                BaseSelenium.locator_finder_by_id(self, collection_page).click()
+                self.locator_finder_by_id(collection_page).click()
 
                 # looking for default collection has been created or not
-                neighbourhood_collection = '//*[@id="collection_neighborhoods"]/div/h5'
-                neighbourhoods_collection_sitem = BaseSelenium.locator_finder_by_xpath(self, neighbourhood_collection)
+                neighbourhood_collection = "//*[text()='neighborhoods']"
+                neighbourhoods_collection_sitem = self.locator_finder_by_xpath(neighbourhood_collection)
 
                 if neighbourhoods_collection_sitem.text == 'neighborhoods':
                     print('open it and populate necessary data into it \n')
                     neighbourhoods_collection_sitem.click()
                     print('select upload button \n')
                     upload = '//*[@id="importCollection"]/span/i'
-                    BaseSelenium.locator_finder_by_xpath(self, upload).click()
+                    self.locator_finder_by_xpath(upload).click()
                     time.sleep(1)
 
                     path = 'C:\\Users\\rearf\\Desktop\\collections\\geo_s2_collections\\neighborhoods.json'
                     print(f'Providing neighborhood collection path {path} \n')
                     choose_file_btn = 'importDocuments'
-                    choose_file_btn_sitem = BaseSelenium.locator_finder_by_id(self, choose_file_btn)
+                    choose_file_btn_sitem = self.locator_finder_by_id(choose_file_btn)
                     choose_file_btn_sitem.send_keys(path)
                     time.sleep(1)
 
                     print('Pressing on confirm btn \n')
                     confirm_btn = 'confirmDocImport'
-                    BaseSelenium.locator_finder_by_id(self, confirm_btn).click()
+                    self.locator_finder_by_id(confirm_btn).click()
                     time.sleep(1)
                     # going back to collection tab
                     self.driver.back()
@@ -266,8 +266,8 @@ class ServicePage(BaseSelenium):
 
                     # looking for restaurants collection has been created or not
 
-                restaurants_collection = '//*[@id="collection_restaurants"]/div/h5'
-                restaurants_collection_sitem = BaseSelenium.locator_finder_by_xpath(self, restaurants_collection)
+                restaurants_collection = "//*[text()='restaurants']"
+                restaurants_collection_sitem = self.locator_finder_by_xpath(restaurants_collection)
                 time.sleep(1)
 
                 if restaurants_collection_sitem.text == 'restaurants':
@@ -275,32 +275,32 @@ class ServicePage(BaseSelenium):
                     restaurants_collection_sitem.click()
                     print('select upload button \n')
                     upload = '//*[@id="importCollection"]/span/i'
-                    BaseSelenium.locator_finder_by_xpath(self, upload).click()
+                    self.locator_finder_by_xpath(upload).click()
                     time.sleep(1)
 
                     path = 'C:\\Users\\rearf\\Desktop\\collections\\geo_s2_collections\\restaurants.json'
                     print(f'Providing restaurants collection path {path} \n')
                     choose_file_btn = 'importDocuments'
-                    choose_file_btn_sitem = BaseSelenium.locator_finder_by_id(self, choose_file_btn)
+                    choose_file_btn_sitem = self.locator_finder_by_id(choose_file_btn)
                     choose_file_btn_sitem.send_keys(path)
                     time.sleep(1)
 
                     print('Pressing on confirm btn \n')
                     confirm_btn = 'confirmDocImport'
-                    BaseSelenium.locator_finder_by_id(self, confirm_btn).click()
+                    self.locator_finder_by_id(confirm_btn).click()
                     time.sleep(1)
 
                     self.select_service_page()
                     self.driver.refresh()
 
                     print('Selecting demo_geo_s2 service \n')
-                    select_service = '//*[@id="installedList"]/div[2]/div/div[3]/span/div'
-                    BaseSelenium.locator_finder_by_xpath(self, select_service).click()
+                    select_service = "//*[text()='demo-geo-s2']"
+                    self.locator_finder_by_xpath(select_service).click()
                     time.sleep(1)
 
                     print('inspecting demo_geo_s2 service interface \n')
                     geo_service = '//*[@id="information"]/div/div[2]/div[2]/input'
-                    BaseSelenium.locator_finder_by_xpath(self, geo_service).click()
+                    self.locator_finder_by_xpath(geo_service).click()
                     time.sleep(4)
 
                     print('Switching interface tab \n')
@@ -309,32 +309,32 @@ class ServicePage(BaseSelenium):
                     # inspecting from the service interface started here
                     print('Visualize random Restaurant \n')
                     random_restaurant = 'randomRestaurant'
-                    BaseSelenium.locator_finder_by_id(self, random_restaurant).click()
+                    self.locator_finder_by_id(random_restaurant).click()
                     time.sleep(3)
 
                     print('Visualize random Neighborhood \n')
                     random_neighborhood = 'randomNeighborhood'
-                    BaseSelenium.locator_finder_by_id(self, random_neighborhood).click()
+                    self.locator_finder_by_id(random_neighborhood).click()
                     time.sleep(3)
 
                     print('Visualize Distance \n')
                     distance = 'geoDistance'
-                    BaseSelenium.locator_finder_by_id(self, distance).click()
+                    self.locator_finder_by_id(distance).click()
                     time.sleep(3)
 
                     print('Visualize Distance between \n')
                     distance_between = 'geoDistanceBetween'
-                    BaseSelenium.locator_finder_by_id(self, distance_between).click()
+                    self.locator_finder_by_id(distance_between).click()
                     time.sleep(3)
 
                     print('Visualize Geo distance nearest \n')
                     distance_nearest = 'geoDistanceNearest'
-                    BaseSelenium.locator_finder_by_id(self, distance_nearest).click()
+                    self.locator_finder_by_id(distance_nearest).click()
                     time.sleep(3)
 
                     print('Visualize Geo intersection \n')
                     intersection = 'geoIntersection'
-                    BaseSelenium.locator_finder_by_id(self, intersection).click()
+                    self.locator_finder_by_id(intersection).click()
                     time.sleep(3)
 
                     print('Switching back to original window \n')
@@ -344,30 +344,30 @@ class ServicePage(BaseSelenium):
                     raise Exception('restaurants Collection not found!')
 
         except Exception:
-            raise Exception('Failed to create the service!!')
+            raise Exception('Error happened during operation, manual check required!!')
 
     def check_demo_geo_s2_service_api(self):
         """Checking demo_geo_s2 service's API"""
         self.select_service_page()
 
         print('Selecting demo_geo_s2 service \n')
-        select_service = '//*[@id="installedList"]/div[2]/div/div[3]/span/div'
-        BaseSelenium.locator_finder_by_xpath(self, select_service).click()
+        select_service = "//*[text()='demo-geo-s2']"
+        self.locator_finder_by_xpath(select_service).click()
         time.sleep(1)
 
         print('Selecting service API \n')
         api = 'service-api'
-        BaseSelenium.locator_finder_by_id(self, api).click()
+        self.locator_finder_by_id(api).click()
         time.sleep(2)
 
         print("Changing view to JSON form \n")
         json = 'jsonLink'
-        BaseSelenium.locator_finder_by_id(self, json).click()
+        self.locator_finder_by_id(json).click()
         time.sleep(3)
 
         print('get back to swagger view \n')
         json = 'jsonLink'
-        BaseSelenium.locator_finder_by_id(self, json).click()
+        self.locator_finder_by_id(json).click()
 
     def checking_function_for_fox_leaflet(self, id_list):
         """this method will take list and check according to that list"""
@@ -375,27 +375,27 @@ class ServicePage(BaseSelenium):
         i = 0
         while i < len(id_list):
             print(f'Checking Foxx leaflet number {i}\n')
-            BaseSelenium.locator_finder_by_xpath(self, id_list[i]).click()
+            self.locator_finder_by_xpath(id_list[i]).click()
             time.sleep(2)
-            BaseSelenium.locator_finder_by_xpath(self, id_list[i]).click()
+            self.locator_finder_by_xpath(id_list[i]).click()
 
             i = i + 1
             if i == len(id_list):
                 print('Checking Foxx leaflets finished \n')
             time.sleep(2)
 
-    def inspect_foxx_leaflet_iframe(self):
+    def inspect_demo_geo_foxx_leaflet_iframe(self):
         """Checking iframe elements of foxx and leaflets"""
         print('Switching to IFrame \n')
         iframe_id = 'swaggerIframe'
-        self.driver.switch_to.frame(BaseSelenium.locator_finder_by_id(self, iframe_id))
+        self.driver.switch_to.frame(self.locator_finder_by_id(iframe_id))
         time.sleep(1)
 
         print("Checking default view \n")
         default_view = "operations-tag-default"
-        BaseSelenium.locator_finder_by_id(self, default_view).click()
+        self.locator_finder_by_id(default_view).click()
         time.sleep(2)
-        BaseSelenium.locator_finder_by_id(self, default_view).click()
+        self.locator_finder_by_id(default_view).click()
 
         print('inspecting documentation through Foxx and leaflet \n')
         first = '//*[@id="operations-default-GET_restaurants"]/div/span[1]'
@@ -416,11 +416,145 @@ class ServicePage(BaseSelenium):
         self.driver.switch_to.default_content()
         time.sleep(1)
 
+    def install_demo_graph_hql_service(self, mount_path):
+        """Installing demo geo s2 service from the list"""
+        self.select_service_page()
+        self.select_add_service_button()
+
+        print('Selecting graphql service \n')
+        graphql = '//*[@id="availableFoxxes"]/div[2]/div/div[1]/p[1]/span'
+        graphql_sitem = self.locator_finder_by_xpath(graphql)
+        graphql_sitem.click()
+        time.sleep(2)
+
+        # ---------------checking graphql's links started here---------------
+
+        print('Checking graphql Github link \n')
+        github_link = '//*[@id="information"]/div/div[2]/div[1]/p[3]/span[2]/a'
+        github_link_sitem = self.locator_finder_by_xpath(github_link)
+        page_title = super().switch_tab(github_link_sitem)
+
+        expected_title = 'Foxx S2 Geospatial Example'
+
+        assert page_title == expected_title, f"Expected text{expected_title} but got {page_title}"
+
+        print('Checking graphql documentation link \n')
+        foxx_graphql_link = '//*[@id="readme"]/p[1]/a[2]'
+        foxx_graphql_link_sitem = self.locator_finder_by_xpath(foxx_graphql_link)
+        page_title = super().switch_tab(foxx_graphql_link_sitem)
+
+        expected_title = 'GitHub - arangodb-foxx/demo-graphql: Example Foxx Service using GraphQL'
+
+        assert page_title == expected_title, f"Expected text{expected_title} but got {page_title}"
+        # ---------------checking graphql's links end here---------------
+
+        print('Installing the graphql service started \n')
+        install_graphql = 'installService'
+        install_graphql_sitem = self.locator_finder_by_id(install_graphql)
+        install_graphql_sitem.click()
+        time.sleep(3)
+
+        print('Mounting the demo graphql service \n')
+        mount_point = 'new-app-mount'
+        mount_point_sitem = self.locator_finder_by_id(mount_point)
+        mount_point_sitem.click()
+        mount_point_sitem.send_keys(mount_path)
+        time.sleep(1)
+
+        print('Install the service \n')
+        install_btn = 'modalButton1'
+        install_btn_sitem = self.locator_finder_by_id(install_btn)
+        install_btn_sitem.click()
+        time.sleep(2)
+
+        # at this point it will be back to service page
+        print('Selecting graphql service \n')
+        graphql_service = "//*[text()='demo-graphql']"
+        graphql_service_sitem = self.locator_finder_by_xpath(graphql_service)
+        graphql_service_sitem.click()
+        time.sleep(2)
+
+        # print('Opening graphql interface \n')
+        # graphql_interface = '//*[@id="information"]/div/div[2]/div[2]/input'
+        # graphql_interface_stiem = self.locator_finder_by_xpath(graphql_interface)
+        # graphql_interface_stiem.click()
+        #
+        # print('Switching to code mirror windows of graphql \n')
+        # self.driver.switch_to.window(self.driver.window_handles[1])
+        #
+        # graphql_interface_execute_btn = '//*[@id="graphiql-container"]/div[1]/div[1]/div/div[2]/button'
+        # graphql_interface_execute_btn_sitem = \
+        #     self.locator_finder_by_xpath(graphql_interface_execute_btn)
+        # graphql_interface_execute_btn_sitem.click()
+
+        # fixme it's hard to access code mirror textarea.
+
+        # print('Executing example query on graphql interface \n')
+        # graphql_code_mirror = '//*[@id="graphiql-container"]/div[1]/div[2]/div[1]/div[1]/div/div[6]'
+        # graphql_code_mirror_sitem = self.locator_finder_by_xpath(graphql_code_mirror)
+        # graphql_code_mirror_sitem.click()
+        # graphql_code_mirror_sitem.send_keys('hellow')
+        # time.sleep(2)
+        #
+        # print('Return back to original window \n')
+        # self.driver.switch_to.window(self.driver.window_handles[0])
+
+        print('Checking API tab of graphql service \n')
+        graphql_api_name = 'service-api'
+        graphql_api_sitem = self.locator_finder_by_id(graphql_api_name)
+        graphql_api_sitem.click()
+        time.sleep(1)
+
+        print('Selecting Swagger view \n')
+        swagger_view = 'jsonLink'
+        self.locator_finder_by_id(swagger_view).click()
+        time.sleep(2)
+        self.locator_finder_by_id(swagger_view).click()
+        time.sleep(2)
+
+        print('Switching to IFrame \n')
+        iframe_id = 'swaggerIframe'
+        self.driver.switch_to.frame(self.locator_finder_by_id(iframe_id))
+        time.sleep(1)
+
+        print("Checking default view \n")
+        default_view = "operations-tag-default"
+        self.locator_finder_by_id(default_view).click()
+        time.sleep(2)
+        self.locator_finder_by_id(default_view).click()
+
+        print('inspecting documentation through Foxx and leaflet \n')
+        first = '//*[@id="operations-default-get"]/div/span[1]'
+        second = '//*[@id="operations-default-post"]/div/span[1]'
+
+        id_list = [first, second]
+        self.checking_function_for_fox_leaflet(id_list)
+
+        print('Getting out of IFrame \n')
+        self.driver.switch_to.default_content()
+        time.sleep(1)
+
+
     def select_service_settings(self):
         """Selecting service settings tab"""
         print('Selecting settings options \n')
         settings = 'service-settings'
-        BaseSelenium.locator_finder_by_id(self, settings).click()
+        self.locator_finder_by_id(settings).click()
+
+    def delete_service_from_setting_tab(self):
+        delete_service = '//*[@id="settings"]/div/button[1]'
+        self.locator_finder_by_xpath(delete_service).click()
+        time.sleep(1)
+
+        confirm_delete = 'modalButton1'
+        self.locator_finder_by_id(confirm_delete).click()
+        time.sleep(1)
+
+        pressing_yes = 'modal-confirm-delete'
+        self.locator_finder_by_id(pressing_yes).click()
+        time.sleep(1)
+
+        self.driver.refresh()
 
     def delete_service(self, service_name):
         """Delete all the services"""
@@ -430,31 +564,40 @@ class ServicePage(BaseSelenium):
 
             try:
                 # try to determine service has already been created
-                service = '//*[@id="installedList"]/div[2]/div/div[1]/p[2]/span'
-                service_sitem = BaseSelenium.locator_finder_by_xpath(self, service).text
+                service = "//*[text()='demo-geo-s2']"
+                service_sitem = self.locator_finder_by_xpath(service).text
                 time.sleep(1)
 
                 if service_sitem == 'demo-geo-s2':
                     print(f'{service_sitem} service has been found and ready to delete \n')
-                    BaseSelenium.locator_finder_by_xpath(self, service).click()
+                    self.locator_finder_by_xpath(service).click()
                     time.sleep(1)
                     # move to settings tab
                     self.select_service_settings()
                     time.sleep(1)
 
-                    delete_service = '//*[@id="settings"]/div/button[1]'
-                    BaseSelenium.locator_finder_by_xpath(self, delete_service).click()
+                    self.delete_service_from_setting_tab()
+                    print(f'{service_sitem} service has been deleted successfully \n')
+
+            except Exception:
+                raise Exception(f'No service found named {service_name}')
+
+        if service_name == 'graphql':
+            # try to determine service has already been created
+            service = "//*[text()='demo-graphql']"
+            service_sitem = self.locator_finder_by_xpath(service).text
+            time.sleep(1)
+
+            try:
+                if service_sitem == 'demo-graphql':
+                    print(f'{service_sitem} service has been found and ready to delete \n')
+                    self.locator_finder_by_xpath(service).click()
+                    time.sleep(1)
+                    # move to settings tab
+                    self.select_service_settings()
                     time.sleep(1)
 
-                    confirm_delete = 'modalButton1'
-                    BaseSelenium.locator_finder_by_id(self, confirm_delete).click()
-                    time.sleep(1)
-
-                    pressing_yes = 'modal-confirm-delete'
-                    BaseSelenium.locator_finder_by_id(self, pressing_yes).click()
-                    time.sleep(1)
-
-                    self.driver.refresh()
+                    self.delete_service_from_setting_tab()
                     print(f'{service_sitem} service has been deleted successfully \n')
 
             except Exception:

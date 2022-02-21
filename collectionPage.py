@@ -104,7 +104,7 @@ class CollectionPage(BaseSelenium):
         self.select_settings_wait_type_id = "change-collection-sync"
         # fixme modalbutton get changed to modalbutton5 in 3.8.5e
         # self.select_new_settings_save_btn_id = "modalButton4"
-        self.select_new_settings_save_btn_id = "modalButton5"
+        self.select_new_settings_save_btn_id = "modalButton4"
 
         self.select_load_index_into_memory_id = "//*[@id='modalButton2']"
         self.select_settings_unload_btn_id = "//*[@id='modalButton3']"

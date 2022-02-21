@@ -1,5 +1,6 @@
 import os
 import time
+import semver
 
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -191,13 +192,14 @@ class BaseSelenium:
 
     # checking current package version from the dashboard
     def current_package_version(self):
+        """checking current package version from the dashboard"""
         package_version = "currentVersion"
         package_version = BaseSelenium.locator_finder_by_id(self, package_version).text
         print("Package Version: ", package_version)
-        time.sleep(1)
+        # version = float(package_version[0:3])
+        print('semver', semver.VersionInfo.parse(package_version))
 
-        version = float(package_version[0:3])
-        return version
+        return semver.VersionInfo.parse(package_version)
 
     def check_ui_responsiveness(self):
         """Checking LOG tab causes unresponsive UI (found in 3.8 server package)"""
