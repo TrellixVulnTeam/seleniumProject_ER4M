@@ -1,0 +1,12 @@
+1649235912452	geckodriver	INFO	Listening on 127.0.0.1:5445
+1649235915553	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "5446" "-no-remote" "-profile" "C:\\Users\\rearf\\AppData\\Local\\Temp\\rust_mozprofile5WlDwb"
+1649235916447	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\rearf\\AppData\\Local\\Temp\\rust_mozprofile5WlDwb\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:5446/devtools/browser/9275de50-601a-415a-9573-e1cef118d5c4
+1649235919242	Marionette	INFO	Listening on port 5456
+1649235919737	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "http://127.0.0.1:8529"
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "http://127.0.0.1:8529"
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "http://127.0.0.1:8529"
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "http://127.0.0.1:8529"
+1649235929566	Marionette	INFO	Stopped listening on port 5456
