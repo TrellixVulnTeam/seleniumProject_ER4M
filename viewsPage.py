@@ -3,9 +3,7 @@ import semver
 from baseSelenium import BaseSelenium
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
-
-
-# from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
 
 class ViewsPage(BaseSelenium):
@@ -14,8 +12,8 @@ class ViewsPage(BaseSelenium):
     select_improved_arangosearch_view_02 = "//h5[contains(text(),'improved_arangosearch_view_02')]"
     select_modified_views_name = "//h5[contains(text(),'modified_views_name')]"
 
-    search_first_view = '//*[@id="firstView"]/div/h5'
-    search_second_view = '//*[@id="secondView"]/div/h5'
+    search_first_view = "//*[text()='firstView']"
+    search_second_view = "//*[text()='secondView']"
 
     select_renamed_view_id = "/html//div[@id='thirdView']"
     select_second_view_id = "//div[@id='secondView']//h5[@class='collectionName']"
@@ -28,42 +26,20 @@ class ViewsPage(BaseSelenium):
         self.naming_new_view_id = "/html//input[@id='newName']"
         self.select_create_btn_id = "//div[@id='modal-dialog']//button[@class='button-success']"
         self.select_views_settings_id = "//a[@id='viewsToggle']/span[@title='Settings']"
-
-        # self.select_sorting_views_id = "//div[@id='viewsDropdown']/ul//label[@class='checkbox checkboxLabel']"
         self.select_sorting_views_id = '//*[@id="viewsDropdown"]/ul/li[2]/a/label/i'
 
         self.search_views_id = "/html//input[@id='viewsSearchInput']"
         self.select_first_view_id = "//*[@id='firstView']/div/h5"
         self.select_collapse_btn_id = "//*[@id='propertiesEditor']/div/div[1]/button[2]"
         self.select_expand_btn_id = "//*[@id='propertiesEditor']/div/div[1]/button[1]"
-        self.select_editor_mode_btn_id = "//div[@id='propertiesEditor']//div[@class='jsoneditor-modes']" \
-                                         "/button[@title='Switch editor mode']"
-        self.switch_to_code_editor_mode_id = "//div[@id='propertiesEditor']//div[@class='jsoneditor-anchor']" \
-                                             "//div[@class='jsoneditor-contextmenu']/ul[@class='jsoneditor-menu']" \
-                                             "//button[@title='Switch to code highlighter']"
-        self.compact_json_data_id = "/html//div[@id='propertiesEditor']//button[@title='Compact JSON data, remove all whitespaces (Ctrl+Shift+\)']"
-        self.switch_to_tree_editor_mode_id = "//div[@id='propertiesEditor']/div[@class='jsoneditor " \
-                                             "jsoneditor-mode-code']//div[@class='jsoneditor-anchor']//" \
-                                             "ul[@class='jsoneditor-menu']//button[@title='Switch to tree editor']"
-        self.click_arangosearch_documentation_link_id = "//div[@id='viewDocumentation']//a[@href=" \
-                                                        "'https://www.arangodb.com/docs/stable" \
-                                                        "/arangosearch-views.html']"
+        self.switch_to_code_editor_mode_id = "//*[text()='Code']"
+        self.compact_json_data_id = "jsoneditor-compact"
+        self.switch_to_tree_editor_mode_id = "//*[text()='Tree']"
         self.select_inside_search_id = "//*[@id='propertiesEditor']/div/div[1]/table" \
                                        "/tbody/tr/td[2]/div/table/tbody/tr/td[2]/input"
-        self.search_result_traverse_up_id = "/html//div[@id='propertiesEditor']/div[@class='jsoneditor " \
-                                            "jsoneditor-mode-tree']//table[@class='jsoneditor-search']" \
-                                            "//div[@title='Search fields and values']/table//button[@title=" \
-                                            "'Previous result (Shift+Enter)']"
-        self.search_result_traverse_down_id = "/html//div[@id='propertiesEditor']/div[@class=" \
-                                              "'jsoneditor jsoneditor-mode-tree']//table[@class=" \
-                                              "'jsoneditor-search']//div[@title=" \
-                                              "'Search fields and values']/table//button[@title='Next result (Enter)']"
-        self.change_consolidation_policy_id = "/html//div[@id='propertiesEditor']/div[@class=" \
-                                              "'jsoneditor jsoneditor-mode-tree']/div[3]/div[@class=" \
-                                              "'jsoneditor-tree']//table[@class='jsoneditor-tree']" \
-                                              "/tbody/tr[16]/td[3]/table[@class='jsoneditor-values']//tr/td[4]/div"
+        self.search_result_traverse_up_id = "jsoneditor-previous"
+        self.search_result_traverse_down_id = "jsoneditor-next"
         self.clicking_rename_views_btn_id = "renameViewButton"
-
         self.rename_views_name_id = "/html//input[@id='editCurrentName']"
         self.rename_views_name_confirm_id = "//div[@id='modal-dialog']//button[@class='button-success']"
 
@@ -107,15 +83,14 @@ class ViewsPage(BaseSelenium):
 
     # searching views
     def search_views(self, expected_text, search_locator):
-        search_views_sitem = self.locator_finder_by_xpath(self.search_views_id)
+        search_views = self.search_views_id
+        search_views_sitem = self.locator_finder_by_xpath(search_views)
         search_views_sitem.click()
         search_views_sitem.clear()
         search_views_sitem.send_keys(expected_text)
         time.sleep(2)
 
         print(f'Checking that we get the right results for {expected_text}\n')
-        # version = self.get_current_package_version()
-        # if semver.VersionInfo.parse(version) <= "3.8.0":
         if self.current_package_version() <= semver.VersionInfo.parse("3.8.0"):
             if expected_text == 'firstView':
                 found = self.locator_finder_by_xpath(search_locator).text
@@ -150,8 +125,11 @@ class ViewsPage(BaseSelenium):
         time.sleep(3)
 
     # selecting object tabs
-    def select_editor_mode_btn(self):
-        select_editor_btn_sitem = self.locator_finder_by_xpath(self.select_editor_mode_btn_id)
+    def select_editor_mode_btn(self, value):
+        if value == 0:
+            select_editor_btn_sitem = self.locator_finder_by_xpath("//*[text()='Tree ▾']")
+        else:
+            select_editor_btn_sitem = self.locator_finder_by_xpath("//*[text()='Code ▾']")
         select_editor_btn_sitem.click()
         time.sleep(3)
 
@@ -164,7 +142,7 @@ class ViewsPage(BaseSelenium):
 
     # switching editor mode to Code compact view
     def compact_json_data(self):
-        compact_json_data_sitem = self.locator_finder_by_xpath(self.compact_json_data_id)
+        compact_json_data_sitem = self.locator_finder_by_class(self.compact_json_data_id)
         compact_json_data_sitem.click()
         time.sleep(3)
 
@@ -177,9 +155,10 @@ class ViewsPage(BaseSelenium):
 
     # Clicking on arangosearch documentation link
     def click_arangosearch_documentation_link(self):
-        self.click_arangosearch_documentation_link_id = \
-            self.locator_finder_by_xpath(self.click_arangosearch_documentation_link_id)
-        title = self.switch_tab(self.click_arangosearch_documentation_link_id)
+        """Clicking on arangosearch documentation link"""
+        click_arangosearch_documentation_link_id = \
+            self.locator_finder_by_link_text('ArangoSearch Views documentation')
+        title = self.switch_tab(click_arangosearch_documentation_link_id)
         expected_title = 'Views Reference | ArangoSearch | Indexing | Manual | ArangoDB Documentation'
         assert title in expected_title, f"Expected page title {expected_title} but got {title}"
 
@@ -193,14 +172,14 @@ class ViewsPage(BaseSelenium):
     # traverse search results down
     def search_result_traverse_down(self):
         search_result_traverse_down_sitem = \
-            self.locator_finder_by_xpath(self.search_result_traverse_down_id)
+            self.locator_finder_by_class(self.search_result_traverse_down_id)
         for x in range(8):
             search_result_traverse_down_sitem.click()
             time.sleep(1)
 
     # traverse search results up
     def search_result_traverse_up(self):
-        search_result_traverse_up_sitem = self.locator_finder_by_xpath(self.search_result_traverse_up_id)
+        search_result_traverse_up_sitem = self.locator_finder_by_class(self.search_result_traverse_up_id)
         for x in range(8):
             search_result_traverse_up_sitem.click()
             time.sleep(1)
@@ -260,7 +239,7 @@ class ViewsPage(BaseSelenium):
         time.sleep(2)
 
         print(f'Selecting direction for {view_name} \n')
-        direction = '/html/body/div[1]/div/div[2]/div[1]/div/div[2]/div/table/tbody/tr/th/table/tbody/tr/td[2]/select'
+        direction = '(//select)[2]'
         self.locator_finder_by_select_using_xpath(direction, types)  # keep it default choice
 
         print(f'Select stored value for {view_name} \n')
@@ -269,16 +248,11 @@ class ViewsPage(BaseSelenium):
         sorted_value_sitem.click()
         time.sleep(2)
 
-        # version = self.current_package_version()
-
-        # if version >= 3.9:
         if self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
             print('stored value has been skipped.\n')
         else:
             print(f'Select stored field for {view_name} \n')
-            # stored_field = "//div[contains(@id,'s2id_field')]"
-            stored_field = "/html/body/div[1]/div/div[2]/div[2]/div/div[2]/div/table/tbody/tr/th/table/tbody/tr/td[1]/div"
-
+            stored_field = "(//a[@class='accordion-toggle collapsed'])[2]"
             stored_field_sitem = self.locator_finder_by_xpath(stored_field)
             stored_field_sitem.click()
             stored_field_sitem.clear()
@@ -287,8 +261,7 @@ class ViewsPage(BaseSelenium):
             time.sleep(2)
 
         print(f'Selecting stored direction for {view_name} \n')
-        stored_direction = '/html/body/div[1]/div/div[2]/div[2]/div/div[2]/div/table/tbody' \
-                           '/tr/th/table/tbody/tr/td[2]/select'
+        stored_direction = "(//select)[3]"
         self.locator_finder_by_select_using_xpath(stored_direction, types)  # keep it default choice
         time.sleep(2)
 
@@ -298,7 +271,7 @@ class ViewsPage(BaseSelenium):
         advance_option_sitem.click()
         time.sleep(2)
 
-        print(f'Select write buffer value for {view_name} \n')
+        print(f'Select write buffer idle value for {view_name} \n')
         write_buffer = 'newWriteBufferIdle'
         write_buffer_sitem = self.locator_finder_by_id(write_buffer)
         write_buffer_sitem.click()
@@ -306,7 +279,7 @@ class ViewsPage(BaseSelenium):
         write_buffer_sitem.send_keys('50')
         time.sleep(2)
 
-        print(f'Select write buffer value for {view_name} \n')
+        print(f'Select write buffer active value for {view_name} \n')
         write_buffer_active = 'newWriteBufferActive'
         write_buffer_active_sitem = self.locator_finder_by_id(write_buffer_active)
         write_buffer_active_sitem.click()
@@ -314,18 +287,20 @@ class ViewsPage(BaseSelenium):
         write_buffer_active_sitem.send_keys('8')
         time.sleep(2)
 
-        print(f'Select max write buffer value for {view_name} \n')
-        max_buffer_size = 'newWriteBufferSizeMax'
-        max_buffer_size_sitem = self.locator_finder_by_id(max_buffer_size)
+        print(f'Select max write buffer size max value for {view_name} \n')
+        max_buffer_size = "//input[@value='33554432']"
+        max_buffer_size_sitem = self.locator_finder_by_xpath(max_buffer_size)
         max_buffer_size_sitem.click()
-        max_buffer_size_sitem.send_keys('33554434')
+
+        a = ActionChains(self.driver)
+        a.key_down(Keys.CONTROL).send_keys('A').key_up(Keys.CONTROL).send_keys(Keys.DELETE)\
+            .send_keys('33554434').perform()
         time.sleep(2)
 
         print(f'Selecting creation button for {view_name} \n')
-        max_buffer_size = 'modalButton1'
-        max_buffer_size_sitem = self.locator_finder_by_id(max_buffer_size)
-        max_buffer_size_sitem.click()
-        max_buffer_size_sitem.send_keys('33554434')
+        create = 'modalButton1'
+        create_sitem = self.locator_finder_by_id(create)
+        create_sitem.click()
         time.sleep(2)
         self.driver.refresh()
 
@@ -344,7 +319,7 @@ class ViewsPage(BaseSelenium):
         time.sleep(2)
 
         print('Selecting segments min value \n')
-        segment_min = "/html/body/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/table/tbody/tr[2]/th[2]/input"
+        segment_min = "(//input[@value='1'])[1]"
         segment_min_sitem = self.locator_finder_by_xpath(segment_min)
         segment_min_sitem.click()
         segment_min_sitem.clear()
@@ -352,7 +327,7 @@ class ViewsPage(BaseSelenium):
         time.sleep(2)
 
         print('Selecting segments max value \n')
-        segment_max = "/html/body/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/table/tbody/tr[3]/th[2]/input"
+        segment_max = "(//input[@value='10'])[1]"
         segment_max_sitem = self.locator_finder_by_xpath(segment_max)
         segment_max_sitem.click()
         segment_max_sitem.clear()
@@ -360,7 +335,7 @@ class ViewsPage(BaseSelenium):
         time.sleep(2)
 
         print('Selecting bytes value \n')
-        segment_bytes = "/html/body/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/table/tbody/tr[4]/th[2]/input"
+        segment_bytes = "(//input[@value='5368709120'])[1]"
         segment_bytes_sitem = self.locator_finder_by_xpath(segment_bytes)
         segment_bytes_sitem.click()
         segment_bytes_sitem.clear()
@@ -368,7 +343,7 @@ class ViewsPage(BaseSelenium):
         time.sleep(2)
 
         print('Selecting bytes floor value \n')
-        segment_floor = "/html/body/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/table/tbody/tr[5]/th[2]/input"
+        segment_floor = "(//input[@value='2097152'])[1]"
         segment_floor_sitem = self.locator_finder_by_xpath(segment_floor)
         segment_floor_sitem.click()
         segment_floor_sitem.clear()
@@ -407,7 +382,7 @@ class ViewsPage(BaseSelenium):
             settings_sitem.click()
 
             print('Change view name \n')
-            name = '/html/body/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/table/tbody/tr[1]/th[2]/input'
+            name = "//input[@value='improved_arangosearch_view_01']"
             name_stiem = self.locator_finder_by_xpath(name)
             name_stiem.click()
             name_stiem.clear()
@@ -486,14 +461,14 @@ class ViewsPage(BaseSelenium):
         print("Selecting expand button \n")
         self.select_expand_btn()
         print("Selecting editor mode \n")
-        self.select_editor_mode_btn()
+        self.select_editor_mode_btn(0)
         print("Switch editor mode to Code \n")
         self.switch_to_code_editor_mode()
         print("Switch editor mode to Compact mode Code \n")
         self.compact_json_data()
 
         print("Selecting editor mode \n")
-        self.select_editor_mode_btn()
+        self.select_editor_mode_btn(1)
         print("Switch editor mode to Tree \n")
         self.switch_to_tree_editor_mode()
 
@@ -514,6 +489,66 @@ class ViewsPage(BaseSelenium):
             self.rename_views_name_confirm()
             print("Rename the current Views completed \n")
         print(f'Checking {name} Completed \n')
+
+    def checking_views_negative_scenario_for_views(self):
+        """This method will check negative input for views name during creation"""
+        self.select_views_tab()
+        print('Selecting views create button \n')
+        create_new_views_id = self.locator_finder_by_xpath(self.create_new_views_id)
+        create_new_views_id.click()
+        time.sleep(2)
+
+        print('Expected error scenario for the Views name started \n')
+        error_input = ['@', '/', 'שלום']
+        print_statement = ['Checking views name with "@"',
+                           'Checking views name with "/"',
+                           'Checking views name with "שלום"']
+        error = 'Only symbols, "_" and "-" are allowed.'
+        error_message = [error, error, error]
+
+        locator_id = '//*[@id="newName"]'
+        error_locator_id = "//p[@class='errorMessage']"
+
+        # method template (self, error_input, print_statement, error_message, locators_id, error_message_id)
+        self.check_expected_error_messages_for_views(error_input,
+                                                     print_statement,
+                                                     error_message,
+                                                     locator_id,
+                                                     error_locator_id)
+        print('Expected error scenario for the Views name competed \n')
+
+        print('Expected error scenario for the Views write buffer idle started \n')
+        error_input = ['@', '/', 'שלום', '9999999999999999']
+        print_statement = ['Checking views name with "@"',
+                           'Checking views name with "/"',
+                           'Checking views name with "שלום"',
+                           'Checking views name with "9999999999999999"']
+        error = 'Only non-negative integers allowed.'
+        error_message = [error, error, error, error]
+
+        print(f'Select advance options \n')
+        advance_option = '//*[@id="accordion4"]/div/div[1]/a/span[2]/b'
+        advance_option_sitem = self.locator_finder_by_xpath(advance_option)
+        advance_option_sitem.click()
+        time.sleep(2)
+
+        print(f'Select write buffer idle value\n')
+        buffer_locator_id = "//input[@value='64']"
+        error_locator_id = '//*[@id="row_newWriteBufferIdle"]/th[2]/p'
+
+        # method template (self, error_input, print_statement, error_message, locators_id, error_message_id)
+        self.check_expected_error_messages_for_views(error_input,
+                                                     print_statement,
+                                                     error_message,
+                                                     buffer_locator_id,
+                                                     error_locator_id)
+        print('Expected error scenario for the Views write buffer idle completed \n')
+
+        print('Closing the views creation \n')
+        close_btn = '//*[@id="modalButton0"]'
+        close_btn_sitem = self.locator_finder_by_xpath(close_btn)
+        close_btn_sitem.click()
+        time.sleep(3)
 
     def delete_views(self, name, locator):
         """This method will delete views"""

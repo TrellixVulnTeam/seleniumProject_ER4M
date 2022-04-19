@@ -25,6 +25,7 @@ class ServicePage(BaseSelenium):
 
     def service_search_option(self, search_keyword):
         """checking service page search options"""
+        # self.driver.refresh()
         search = 'foxxSearch'
         service_search_stiem = self.locator_finder_by_id(search)
         service_search_stiem.click()
@@ -37,20 +38,19 @@ class ServicePage(BaseSelenium):
 
         # checking search find the correct demo services
         if search_keyword == 'demo':
-            search_item = '//*[@id="availableFoxxes"]/div[2]/div/div[1]/p[1]/span'
+            search_item = "//*[text()='demo-graphql']"
             expected_text = 'demo-graphql'
             demo_graphql_stiem = self.locator_finder_by_xpath(search_item)
             assert demo_graphql_stiem.text == expected_text, f"Expected text{expected_text} " \
                                                              f"but got {demo_graphql_stiem.text}"
         if search_keyword == 'tab':
-            search_item = '//*[@id="availableFoxxes"]/div[7]/div/div[1]/p[1]/span'
+            search_item = "//*[text()='tableau-connector']"
             expected_text = 'tableau-connector'
             demo_graphql_stiem = self.locator_finder_by_xpath(search_item)
-            # print(f'{demo_graphql_stiem}')
             assert demo_graphql_stiem.text == expected_text, f"Expected text{expected_text} " \
                                                              f"but got {demo_graphql_stiem.text}"
         if search_keyword == 'grafana':
-            search_item = '//*[@id="availableFoxxes"]/div[3]/div/div[1]/p[1]/span'
+            search_item = "//*[text()='grafana-connector']"
             expected_text = 'grafana-connector'
             demo_graphql_stiem = self.locator_finder_by_xpath(search_item)
             assert demo_graphql_stiem.text == expected_text, f"Expected text{expected_text} " \
@@ -163,18 +163,20 @@ class ServicePage(BaseSelenium):
 
     def select_demo_geo_s2_service(self):
         """Selecting demo geo s2 service from the list"""
+        self.driver.refresh()
         print('Selecting demo_geo_s2 service \n')
-        geo_service = '//*[@id="availableFoxxes"]/div[1]/div/div[3]'
+        geo_service = "//*[text()='demo-geo-s2']"
         geo_service_sitem = self.locator_finder_by_xpath(geo_service)
         geo_service_sitem.click()
         time.sleep(2)
 
-    def setup_demo_geo_s2_service(self):
+    def checking_demo_geo_s2_service_github(self):
         """checking general stuff of demo_geo_s2 service"""
+        # fixme github link is dead
         self.driver.refresh()
-        time.sleep(1)
+        time.sleep(2)
         self.select_demo_geo_s2_service()
-        github_link = '//*[@id="information"]/div/div[2]/div[1]/p[3]/span[2]/a'
+        github_link = "//*[text()='demo-geo-s2']"
         github_link_sitem = self.locator_finder_by_xpath(github_link)
         page_title = super().switch_tab(github_link_sitem)
 
@@ -194,7 +196,6 @@ class ServicePage(BaseSelenium):
         service_sitem.click()
         time.sleep(2)
 
-        # select a mount point FIXME
         print(f'Selecting service mount point at {mount_path} \n')
         mount_point = 'new-app-mount'
         mount_point_sitem = self.locator_finder_by_id(mount_point)
@@ -234,6 +235,8 @@ class ServicePage(BaseSelenium):
                 # got to collection tab
                 collection_page = 'collections'
                 self.locator_finder_by_id(collection_page).click()
+                time.sleep(1)
+                self.driver.refresh()
 
                 # looking for default collection has been created or not
                 neighbourhood_collection = "//*[text()='neighborhoods']"
@@ -398,18 +401,18 @@ class ServicePage(BaseSelenium):
         self.locator_finder_by_id(default_view).click()
 
         print('inspecting documentation through Foxx and leaflet \n')
-        first = '//*[@id="operations-default-GET_restaurants"]/div/span[1]'
-        second = '//*[@id="operations-default-GET_neighborhoods"]/div/span[1]'
-        third = '//*[@id="operations-default-GET_pointsInNeighborhood_id"]/div/span[1]'
-        fourth = '//*[@id="operations-default-GET_geoContainsBenchmark_count"]/div/span[1]'
-        fifth = '//*[@id="operations-default-GET_geoIntersection"]/div/span[1]'
-        sixth = '//*[@id="operations-default-GET_geoDistanceNearest"]/div/span[1]'
-        seventh = '//*[@id="operations-default-GET_geoDistanceBetween"]/div/span[1]'
-        eighth = '//*[@id="operations-default-GET_geoDistance"]/div/span[1]'
-        ninth = '//*[@id="operations-default-GET_geoDistanceBenchmark_count"]/div/span[1]'
-        tenth = '//*[@id="operations-default-GET_geoNearBenchmark_count"]/div/span[1]'
+        template_str = lambda leaflet: f'//*[@id="operations-default-GET_{leaflet}"]/div/span[1]'
 
-        id_list = [first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth]
+        id_list = [template_str('restaurants'),
+                   template_str('neighborhoods'),
+                   template_str('pointsInNeighborhood_id'),
+                   template_str('geoContainsBenchmark_count'),
+                   template_str('geoIntersection'),
+                   template_str('geoDistanceNearest'),
+                   template_str('geoDistanceBetween'),
+                   template_str('geoDistance'),
+                   template_str('geoDistanceBenchmark_count'),
+                   template_str('geoNearBenchmark_count')]
         self.checking_function_for_fox_leaflet(id_list)
 
         print('Getting out of IFrame \n')
@@ -417,35 +420,36 @@ class ServicePage(BaseSelenium):
         time.sleep(1)
 
     def install_demo_graph_hql_service(self, mount_path):
-        """Installing demo geo s2 service from the list"""
+        """Installing demo_graph_hql_service from the list"""
         self.select_service_page()
         self.select_add_service_button()
 
         print('Selecting graphql service \n')
-        graphql = '//*[@id="availableFoxxes"]/div[2]/div/div[1]/p[1]/span'
+        graphql = "//*[text()='demo-graphql']"
         graphql_sitem = self.locator_finder_by_xpath(graphql)
         graphql_sitem.click()
         time.sleep(2)
 
         # ---------------checking graphql's links started here---------------
 
-        print('Checking graphql Github link \n')
-        github_link = '//*[@id="information"]/div/div[2]/div[1]/p[3]/span[2]/a'
-        github_link_sitem = self.locator_finder_by_xpath(github_link)
-        page_title = super().switch_tab(github_link_sitem)
-
-        expected_title = 'Foxx S2 Geospatial Example'
-
-        assert page_title == expected_title, f"Expected text{expected_title} but got {page_title}"
-
-        print('Checking graphql documentation link \n')
-        foxx_graphql_link = '//*[@id="readme"]/p[1]/a[2]'
-        foxx_graphql_link_sitem = self.locator_finder_by_xpath(foxx_graphql_link)
-        page_title = super().switch_tab(foxx_graphql_link_sitem)
-
-        expected_title = 'GitHub - arangodb-foxx/demo-graphql: Example Foxx Service using GraphQL'
-
-        assert page_title == expected_title, f"Expected text{expected_title} but got {page_title}"
+        # Fixme github link doesn't work
+        # print('Checking graphql Github link \n')
+        # github_link = "//*[text()='graphql-sync wrapper for graphql-js']"
+        # github_link_sitem = self.locator_finder_by_xpath(github_link)
+        # page_title = super().switch_tab(github_link_sitem)
+        #
+        # expected_title = 'GitHub - arangodb-foxx/demo-graphql: Example Foxx Service using GraphQL'
+        #
+        # assert page_title == expected_title, f"Expected text{expected_title} but got {page_title}"
+        #
+        # print('Checking graphql documentation link \n')
+        # foxx_graphql_link = '//*[@id="readme"]/p[1]/a[2]'
+        # foxx_graphql_link_sitem = self.locator_finder_by_xpath(foxx_graphql_link)
+        # page_title = super().switch_tab(foxx_graphql_link_sitem)
+        #
+        # expected_title = 'Documentation Overview - ArangoDB the native multi-model, open-source database'
+        #
+        # assert page_title == expected_title, f"Expected text{expected_title} but got {page_title}"
         # ---------------checking graphql's links end here---------------
 
         print('Installing the graphql service started \n')
@@ -474,30 +478,21 @@ class ServicePage(BaseSelenium):
         graphql_service_sitem.click()
         time.sleep(2)
 
-        # print('Opening graphql interface \n')
-        # graphql_interface = '//*[@id="information"]/div/div[2]/div[2]/input'
-        # graphql_interface_stiem = self.locator_finder_by_xpath(graphql_interface)
-        # graphql_interface_stiem.click()
-        #
-        # print('Switching to code mirror windows of graphql \n')
-        # self.driver.switch_to.window(self.driver.window_handles[1])
-        #
-        # graphql_interface_execute_btn = '//*[@id="graphiql-container"]/div[1]/div[1]/div/div[2]/button'
-        # graphql_interface_execute_btn_sitem = \
-        #     self.locator_finder_by_xpath(graphql_interface_execute_btn)
-        # graphql_interface_execute_btn_sitem.click()
+        print('Opening graphql interface \n')
+        graphql_interface = '//*[@id="information"]/div/div[2]/div[2]/input'
+        graphql_interface_stiem = self.locator_finder_by_xpath(graphql_interface)
+        graphql_interface_stiem.click()
 
-        # fixme it's hard to access code mirror textarea.
+        print('Switching to code mirror windows of graphql \n')
+        self.driver.switch_to.window(self.driver.window_handles[2])
 
-        # print('Executing example query on graphql interface \n')
-        # graphql_code_mirror = '//*[@id="graphiql-container"]/div[1]/div[2]/div[1]/div[1]/div/div[6]'
-        # graphql_code_mirror_sitem = self.locator_finder_by_xpath(graphql_code_mirror)
-        # graphql_code_mirror_sitem.click()
-        # graphql_code_mirror_sitem.send_keys('hellow')
-        # time.sleep(2)
-        #
-        # print('Return back to original window \n')
-        # self.driver.switch_to.window(self.driver.window_handles[0])
+        graphql_interface_execute_btn = '//*[@id="graphiql-container"]/div[1]/div[1]/div/div[2]/button'
+        graphql_interface_execute_btn_sitem = \
+            self.locator_finder_by_xpath(graphql_interface_execute_btn)
+        graphql_interface_execute_btn_sitem.click()
+
+        print('Return back to original window \n')
+        self.driver.switch_to.window(self.driver.window_handles[0])
 
         print('Checking API tab of graphql service \n')
         graphql_api_name = 'service-api'
@@ -534,6 +529,45 @@ class ServicePage(BaseSelenium):
         self.driver.switch_to.default_content()
         time.sleep(1)
 
+    def replace_service(self):
+        """This method will replace the service"""""
+        self.select_service_page()
+        self.select_demo_geo_s2_service()
+        self.select_service_settings()
+
+        print('Replacing demo_geo_s2 service with demo-graphql service \n')
+        replace_btn = "(//button[@class='app-replace upgrade button-warning'][normalize-space()='Replace'])[2]"
+        self.locator_finder_by_xpath(replace_btn).click()
+        time.sleep(1)
+
+        new_service = "(//button[@appid='demo-graphql'])[1]"
+        self.locator_finder_by_xpath(new_service).click()
+        time.sleep(2)
+
+        print("Run teardown before replacing service \n")
+        # tear_down = "(//input[@value='false'])[1]" # v3.9.0  and less
+        tear_down = '//*[@id="new-app-flag-teardown"]'  # v3.9.1
+        self.locator_finder_by_xpath(tear_down).click()
+        time.sleep(1)
+
+        print("discard configuration before replacing service \n")
+        # configuration = "(//input[@value='false'])[2]" # v3.9.0 and less
+        configuration = '//*[@id="new-app-flag-replace"]'  # v3.9.1
+        self.locator_finder_by_xpath(configuration).click()
+        time.sleep(1)
+
+        print("replacing begins with graphql service \n")
+        replace = 'modalButton1'
+        self.locator_finder_by_id(replace).click()
+        time.sleep(3)
+        try:
+            success_notification = super().handle_red_bar()
+            time.sleep(2)
+            expected_msg = 'Services: Service demo-graphql installed.'
+            assert expected_msg == success_notification, f"Expected {expected_msg} but got {success_notification}"
+        except Exception:
+            raise Exception('Error occurred!! required manual inspection.\n')
+        print('Service successfully replaced \n')
 
     def select_service_settings(self):
         """Selecting service settings tab"""
@@ -556,20 +590,37 @@ class ServicePage(BaseSelenium):
 
         self.driver.refresh()
 
+    def collection_deletion(self, col_id):
+        """Collection will be deleted by this method"""
+        self.locator_finder_by_id(col_id).click()
+        time.sleep(1)
+
+        settings = "//*[text()='Settings']"
+        self.locator_finder_by_xpath(settings).click()
+        time.sleep(1)
+
+        delete = "//*[text()='Delete']"
+        self.locator_finder_by_xpath(delete).click()
+        time.sleep(1)
+
+        confirm_delete = '//*[@id="modal-confirm-delete"]'
+        self.locator_finder_by_xpath(confirm_delete).click()
+        time.sleep(1)
+
     def delete_service(self, service_name):
         """Delete all the services"""
         self.select_service_page()
 
-        if service_name == 'demo_geo_s2':
+        if service_name == '/geo':
 
             try:
                 # try to determine service has already been created
-                service = "//*[text()='demo-geo-s2']"
+                service = "//*[text()='/geo']"
                 service_sitem = self.locator_finder_by_xpath(service).text
                 time.sleep(1)
 
-                if service_sitem == 'demo-geo-s2':
-                    print(f'{service_sitem} service has been found and ready to delete \n')
+                if service_sitem == '/geo':
+                    print(f'Replaced {service_sitem} service has been found and ready to delete \n')
                     self.locator_finder_by_xpath(service).click()
                     time.sleep(1)
                     # move to settings tab
@@ -579,17 +630,26 @@ class ServicePage(BaseSelenium):
                     self.delete_service_from_setting_tab()
                     print(f'{service_sitem} service has been deleted successfully \n')
 
+                    # deleting collections for demo-geo-s2
+                    collection_page = 'collections'
+                    self.locator_finder_by_id(collection_page).click()
+                    time.sleep(2)
+
+                    # deleting neighborhood collection
+                    self.collection_deletion('collection_neighborhoods')
+                    self.collection_deletion('collection_restaurants')
+
             except Exception:
                 raise Exception(f'No service found named {service_name}')
 
-        if service_name == 'graphql':
+        if service_name == '/graphql':
             # try to determine service has already been created
-            service = "//*[text()='demo-graphql']"
+            service = "//*[text()='/graphql']"
             service_sitem = self.locator_finder_by_xpath(service).text
             time.sleep(1)
 
             try:
-                if service_sitem == 'demo-graphql':
+                if service_sitem == '/graphql':
                     print(f'{service_sitem} service has been found and ready to delete \n')
                     self.locator_finder_by_xpath(service).click()
                     time.sleep(1)

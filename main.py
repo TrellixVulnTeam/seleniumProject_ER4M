@@ -77,10 +77,9 @@ class Test(BaseSelenium):
         self.dash.check_current_package_version()
         if self.deployment == 1:
             self.dash.check_current_username()
-            version = self.current_package_version()
-            # if version == 3.9:
-            #     self.dash.check_db_engine()
-            #     self.dash.check_db_uptime()
+            if self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
+                self.dash.check_db_engine()
+                self.dash.check_db_uptime()
 
         self.dash.check_current_db()
         self.dash.check_db_status()
@@ -159,11 +158,12 @@ class Test(BaseSelenium):
         print("Sorting collections by type\n")
         self.col.sort_by_type()
         print("Sorting collections by descending\n")
-        # self.col.sort_descending()
-        # self.col.sort_descending()
+        self.col.sort_descending()
+        self.col.sort_descending()
         print("Sorting collections by name\n")
-        # self.col.sort_by_name()
+        self.col.sort_by_name()
 
+        self.driver.refresh()
         self.col.select_edge_collection_upload()
         print("Uploading file to the collection started\n")
         self.col.select_upload_btn()
@@ -214,12 +214,12 @@ class Test(BaseSelenium):
         print("Selecting Index menu\n")
         self.col.select_index_menu()
         print("Create new index\n")
-        version = BaseSelenium.current_package_version(self)
         self.col.create_new_index('Persistent', 1)
         self.col.create_new_index('Geo', 2)
         self.col.create_new_index('Fulltext', 3)
         self.col.create_new_index('TTL', 4)
-        if version == 3.9:
+
+        if self.current_package_version() == semver.VersionInfo.parse("3.9.0"):
             self.col.create_new_index('ZKD', 5)
             print("Deleting all index started\n")
             for i in range(4):
@@ -242,9 +242,13 @@ class Test(BaseSelenium):
             print('Rename collection is not supported in Cluster deployment thus skipped \n')
         else:
             self.col.rename_collection()  # rename collection name is not allowed on other deployment mode
-            print("Loading and Unloading collection\n")
-            # self.col.select_settings_unload_btn()  # might be deprecated feature
-            # self.col.select_settings_unload_btn()
+            if semver.VersionInfo.parse("3.8.0") <= self.current_package_version() \
+                    <= semver.VersionInfo.parse("3.8.100"):
+                print("Loading and Unloading collection\n")
+                self.col.select_settings_unload_btn()  # might be deprecated feature
+                self.col.select_settings_unload_btn()
+            else:
+                print('Loading unloading is deprecated for the current package version.')
         self.driver.refresh()
         print("Truncate collection\n")
         self.col.select_truncate_btn()
@@ -288,18 +292,7 @@ class Test(BaseSelenium):
             print('Creating improved views completed \n')
 
             # Checking improved views
-            # if semver.VersionInfo.parse(version) > "3.9.0":
-            if self.current_package_version() > semver.VersionInfo.parse("3.9.0"):
-                self.views.checking_modified_views(self.deployment)
-
-                if self.deployment == 3:
-                    self.views.delete_new_views('improved_arangosearch_view_01')
-                    self.views.delete_new_views('improved_arangosearch_view_02')
-                else:
-                    self.views.delete_new_views('modified_views_name')
-                    self.views.delete_new_views('improved_arangosearch_view_02')
-
-            else:
+            if semver.VersionInfo.parse("3.8.100") < self.current_package_version() < semver.VersionInfo.parse("3.9.100"):
                 self.views.checking_improved_views('improved_arangosearch_view_01',
                                                    self.views.select_improved_arangosearch_view_01, self.deployment)
                 print('Deleting views started \n')
@@ -314,12 +307,21 @@ class Test(BaseSelenium):
                     self.views.delete_views('improved_arangosearch_view_02',
                                             self.views.select_improved_arangosearch_view_02)
 
-            print('Deleting views completed \n')
+            # checking improved view for 3.10.0
+            if self.current_package_version() >= semver.VersionInfo.parse("3.10.0"):
+                self.views.checking_modified_views(self.deployment)
+                print('Deleting views started \n')
+                if self.deployment == 3:
+                    self.views.delete_new_views('improved_arangosearch_view_01')
+                    self.views.delete_new_views('improved_arangosearch_view_02')
+                else:
+                    self.views.delete_new_views('modified_views_name')
+                    self.views.delete_new_views('improved_arangosearch_view_02')
 
-        # for package version less than 3.9
-        # elif version <= 3.8:
-        # elif semver.VersionInfo.parse(version) <= "3.8.0":
-        elif self.current_package_version() <= semver.VersionInfo.parse("3.8.0"):
+            print('Deleting views completed \n')
+            # self.views.checking_views_negative_scenario_for_views()
+
+        elif self.current_package_version() <= semver.VersionInfo.parse("3.8.100"):
             self.views.create_new_views('firstView')
             self.views.create_new_views('secondView')
 
@@ -341,14 +343,14 @@ class Test(BaseSelenium):
             print("Selecting expand button \n")
             self.views.select_expand_btn()
             print("Selecting editor mode \n")
-            self.views.select_editor_mode_btn()
+            self.views.select_editor_mode_btn(0)
             print("Switch editor mode to Code \n")
             self.views.switch_to_code_editor_mode()
             print("Switch editor mode to Compact mode Code \n")
             self.views.compact_json_data()
 
             print("Selecting editor mode \n")
-            self.views.select_editor_mode_btn()
+            self.views.select_editor_mode_btn(1)
             print("Switch editor mode to Tree \n")
             self.views.switch_to_tree_editor_mode()
 
@@ -383,7 +385,7 @@ class Test(BaseSelenium):
         del self.login
         del self.views
         print("---------Checking Views completed--------- \n")
-
+        self.views.checking_views_negative_scenario_for_views()
         return 'views'
 
     def test_graph(self):
@@ -404,7 +406,7 @@ class Test(BaseSelenium):
         self.graph9 = GraphPage(self.driver)
         self.graph01 = GraphPage(self.driver)
 
-        # print("Manual Graph creation started \n")
+        print("Manual Graph creation started \n")
         # self.graph.create_manual_graph()
         self.graph.select_graph_page()
         # self.graph.adding_knows_manual_graph()
@@ -419,75 +421,75 @@ class Test(BaseSelenium):
         # print("Adding Smart Graph started \n")
         # self.graph01.adding_smart_graph()
         # print("Adding Smart Graph completed \n")
-
+        #
         # print("Adding Disjoint Smart Graph started \n")
         # self.graph01.adding_smart_graph(True)
 
-        # print("Example Graphs creation started\n")
-        # print("Creating Knows Graph\n")
-        # self.graph1.select_create_graph(1)
-        # self.driver.refresh()
-        # print("Checking required collections created for Knows Graph\n")
-        # self.graph1.checking_collection_creation(1)
-        # print("Searching for 'knows' and 'persons' collections\n")
-        # self.graph1.check_required_collection(1)
-        #
-        # print("Creating Traversal Graph\n")
-        # self.graph2.select_create_graph(2)
-        # self.driver.refresh()
-        # print("Checking required collections created for Traversal Graph\n")
-        # self.graph2.checking_collection_creation(2)
-        # print("Searching for 'circles' and 'edges' collections\n")
-        # self.graph2.check_required_collection(2)
-        #
-        # print("Creating K Shortest Path Graph\n")
-        # self.graph3.select_create_graph(3)
-        # self.driver.refresh()
-        # print("Checking required collections created for K Shortest Path Graph\n")
-        # self.graph3.checking_collection_creation(3)
-        # print("Searching for 'connections' and 'places' collections\n")
-        # self.graph3.check_required_collection(3)
-        #
-        # print("Creating Mps Graph\n")
-        # self.graph4.select_create_graph(4)
-        # self.driver.refresh()
-        # print("Checking required collections created for Mps Graph\n")
-        # self.graph4.checking_collection_creation(4)
-        # print("Searching for 'mps_edges' and 'mps_verts' collections\n")
-        # self.graph4.check_required_collection(4)
-        #
-        # print("Creating World Graph\n")
-        # self.graph5.select_create_graph(5)
-        # self.driver.refresh()
-        # print("Checking required collections created for World Graph\n")
-        # self.graph5.checking_collection_creation(5)
-        # print("Searching for 'worldEdges' and 'worldvertices' collections\n")
-        # self.graph5.check_required_collection(5)
-        #
-        # print("Creating Social Graph\n")
-        # self.graph6.select_create_graph(6)
-        # self.driver.refresh()
-        # print("Checking required collections created for Social Graph\n")
-        # self.graph6.checking_collection_creation(6)
-        # print("Searching for 'female' , 'male' and 'relation' collections\n")
-        # self.graph6.check_required_collection(6)
-        #
-        # print("Creating City Graph\n")
-        # self.graph7.select_create_graph(7)
-        # self.driver.refresh()
-        # print("Checking required collections created for City Graph\n")
-        # self.graph7.checking_collection_creation(7)
-        # print("Searching for 'frenchCity' , 'frenchHighway' 'germanCity', 'germanHighway' & 'internationalHighway'\n")
-        # self.graph7.check_required_collection(7)
-        # print("Example Graphs creation Completed\n")
-        #
-        # print("Sorting all graphs as descending\n")
-        # self.graph.select_sort_descend()
-        #
-        # print("Selecting Knows Graph for inspection\n")
-        # # self.graph.inspect_knows_graph()
-        # print("Selecting Graphs settings menu\n")
-        # # self.graph.graph_setting()
+        print("Example Graphs creation started\n")
+        print("Creating Knows Graph\n")
+        self.graph1.select_create_graph(1)
+        self.driver.refresh()
+        print("Checking required collections created for Knows Graph\n")
+        self.graph1.checking_collection_creation(1)
+        print("Searching for 'knows' and 'persons' collections\n")
+        self.graph1.check_required_collection(1)
+
+        print("Creating Traversal Graph\n")
+        self.graph2.select_create_graph(2)
+        self.driver.refresh()
+        print("Checking required collections created for Traversal Graph\n")
+        self.graph2.checking_collection_creation(2)
+        print("Searching for 'circles' and 'edges' collections\n")
+        self.graph2.check_required_collection(2)
+
+        print("Creating K Shortest Path Graph\n")
+        self.graph3.select_create_graph(3)
+        self.driver.refresh()
+        print("Checking required collections created for K Shortest Path Graph\n")
+        self.graph3.checking_collection_creation(3)
+        print("Searching for 'connections' and 'places' collections\n")
+        self.graph3.check_required_collection(3)
+
+        print("Creating Mps Graph\n")
+        self.graph4.select_create_graph(4)
+        self.driver.refresh()
+        print("Checking required collections created for Mps Graph\n")
+        self.graph4.checking_collection_creation(4)
+        print("Searching for 'mps_edges' and 'mps_verts' collections\n")
+        self.graph4.check_required_collection(4)
+
+        print("Creating World Graph\n")
+        self.graph5.select_create_graph(5)
+        self.driver.refresh()
+        print("Checking required collections created for World Graph\n")
+        self.graph5.checking_collection_creation(5)
+        print("Searching for 'worldEdges' and 'worldvertices' collections\n")
+        self.graph5.check_required_collection(5)
+
+        print("Creating Social Graph\n")
+        self.graph6.select_create_graph(6)
+        self.driver.refresh()
+        print("Checking required collections created for Social Graph\n")
+        self.graph6.checking_collection_creation(6)
+        print("Searching for 'female' , 'male' and 'relation' collections\n")
+        self.graph6.check_required_collection(6)
+
+        print("Creating City Graph\n")
+        self.graph7.select_create_graph(7)
+        self.driver.refresh()
+        print("Checking required collections created for City Graph\n")
+        self.graph7.checking_collection_creation(7)
+        print("Searching for 'frenchCity' , 'frenchHighway' 'germanCity', 'germanHighway' & 'internationalHighway'\n")
+        self.graph7.check_required_collection(7)
+        print("Example Graphs creation Completed\n")
+
+        print("Sorting all graphs as descending\n")
+        self.graph.select_sort_descend()
+
+        print("Selecting Knows Graph for inspection\n")
+        self.graph.inspect_knows_graph()
+        print("Selecting Graphs settings menu\n")
+        self.graph.graph_setting()
 
         self.graph.select_graph_page()
 
@@ -543,15 +545,17 @@ class Test(BaseSelenium):
         self.service.select_category_option_search_filter('demo')
         self.service.select_category_option_search_filter('connector')
 
-        self.service.setup_demo_geo_s2_service()
+        # self.service.checking_demo_geo_s2_service_github()
         self.service.install_demo_geo_s2_service('/geo')
         self.service.check_demo_geo_s2_service_api()
         self.service.inspect_demo_geo_foxx_leaflet_iframe()
 
         self.service.install_demo_graph_hql_service('/graphql')
 
-        self.service.delete_service('demo_geo_s2')
-        self.service.delete_service('graphql')
+        self.service.replace_service()
+
+        self.service.delete_service('/geo')
+        self.service.delete_service('/graphql')
 
         del self.login
         del self.service
@@ -635,16 +639,16 @@ class Test(BaseSelenium):
         login.login('root', '')
 
         user = UserPage(self.driver)
-        user.user_tab()
-        user.add_new_user('tester')
-        user.add_new_user('tester01')
-
+        # user.user_tab()
+        # user.add_new_user('tester')
+        # user.add_new_user('tester01')
+        #
         db = DatabasePage(self.driver)
-        db.create_new_db('Sharded', 0, self.deployment)  # 0 = sharded DB
-        db.create_new_db('OneShard', 1, self.deployment)  # 1 = one shard DB
+        # db.create_new_db('Sharded', 0, self.deployment)  # 0 = sharded DB
+        # db.create_new_db('OneShard', 1, self.deployment)  # 1 = one shard DB
 
         # db.test_database_expected_error(self.deployment)  # testing expected error condition for database creation
-        self.driver.back()
+        # self.driver.back()
         db.select_database_page()
         print('Checking sorting databases to ascending and descending \n')
         db.sorting_db()
@@ -675,8 +679,9 @@ class Test(BaseSelenium):
         login.login('root', '')
         analyzers = AnalyzerPage(self.driver)
 
-        version = analyzers.current_package_version()
-        if version >= 3.9:
+        # version = analyzers.current_package_version()
+        # if version >= 3.9:
+        if self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
             analyzers.select_analyzers_page()
             analyzers.select_help_filter_btn()
 
@@ -895,13 +900,12 @@ ui = Test()  # creating obj for the UI test
 # test_name = ui.test_login()  # testing Login functionality
 # test_name = ui.test_dashboard()  # testing Dashboard functionality
 # test_name = ui.test_collection()  # testing Collection tab
-# test_name = ui.test_views()  # testing views functionality
+test_name = ui.test_views()  # testing views functionality
 # test_name = ui.test_query()  # testing query functionality **needs cluster deployment
 # test_name = ui.test_graph()  # testing graph functionality **needs cluster deployment
-test_name = ui.test_service()  # testing service page
+# test_name = ui.test_service()  # testing service page
 # test_name = ui.test_database()  # testing database page
 # test_name = ui.test_support()  # testing support tab functionality
 # test_name = ui.test_user()  # testing User functionality
 # test_name = ui.test_analyzers()  # testing analyzers p1age  # supports only 3.9* versions
-
 ui.teardown(test_name)  # close the driver and quit

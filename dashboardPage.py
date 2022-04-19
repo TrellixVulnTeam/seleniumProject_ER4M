@@ -3,6 +3,7 @@ import time
 from selenium.common.exceptions import TimeoutException
 
 from baseSelenium import BaseSelenium
+import semver
 
 
 class DashboardPage(BaseSelenium):
@@ -135,7 +136,8 @@ class DashboardPage(BaseSelenium):
 
     # checking system metrics tab from the dashboard
     def check_system_metrics(self):
-        if super().current_package_version() >= 3.8:
+        # if super().current_package_version() >= 3.8:
+        if self.current_package_version() >= semver.VersionInfo.parse("3.8.0"):
             self.check_system_metrics_id = BaseSelenium.locator_finder_by_id(self, self.check_system_metrics_id)
             self.check_system_metrics_id.click()
             time.sleep(1)

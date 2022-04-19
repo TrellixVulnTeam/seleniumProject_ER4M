@@ -2,6 +2,7 @@ import time
 from baseSelenium import BaseSelenium
 from selenium.common.exceptions import TimeoutException
 import traceback
+import semver
 
 
 class CollectionPage(BaseSelenium):
@@ -104,11 +105,11 @@ class CollectionPage(BaseSelenium):
         self.select_settings_wait_type_id = "change-collection-sync"
         # fixme modalbutton get changed to modalbutton5 in 3.8.5e
         # self.select_new_settings_save_btn_id = "modalButton4"
-        self.select_new_settings_save_btn_id = "modalButton4"
+        self.select_new_settings_save_btn_id = "modalButton5"
 
         self.select_load_index_into_memory_id = "//*[@id='modalButton2']"
-        self.select_settings_unload_btn_id = "//*[@id='modalButton3']"
-        self.select_truncate_btn_id = "//*[@id='modalButton1']"
+        self.select_settings_unload_btn_id = "modalButton3"
+        self.select_truncate_btn_id = "modalButton1"
         self.select_truncate_confirm_btn_id = "//*[@id='modal-confirm-delete']"
         self.delete_collection_id = "//*[@id='modalButton0']"
         self.delete_collection_confirm_id = "//*[@id='modal-confirm-delete']"
@@ -310,8 +311,9 @@ class CollectionPage(BaseSelenium):
 
     # Sorting collection by type
     def sort_by_type(self):
-        version = super().current_package_version()
-        if version == 3.8:
+        # version = super().current_package_version()
+        # if version == 3.8:
+        if self.current_package_version() == semver.VersionInfo.parse("3.8.0"):
             sort_by_type = '//*[@id="collectionsDropdown"]/ul[3]/li[3]/a/label'
             sort_by_type_sitem = BaseSelenium.locator_finder_by_xpath(self, sort_by_type)
         else:
@@ -322,9 +324,9 @@ class CollectionPage(BaseSelenium):
 
     def sort_descending(self):
         """Sorting collection by descending"""
-        sort_by_descending = '//*[@id="collectionsDropdown"]/ul[3]/li[4]/a/label/i'
-        version = super().current_package_version()
-        if version == 3.8:
+        # version = super().current_package_version()
+        # if version == 3.8:
+        if self.current_package_version() == semver.VersionInfo.parse("3.8.0"):
             sort_by_descending = '//*[@id="collectionsDropdown"]/ul[3]/li[4]/a/label/i'
             sort_descending_sitem = BaseSelenium.locator_finder_by_xpath(self, sort_by_descending)
         else:
@@ -334,8 +336,9 @@ class CollectionPage(BaseSelenium):
 
     def sort_by_name(self):
         """Sorting collection by name"""
-        version = super().current_package_version()
-        if version == 3.8:
+        # version = super().current_package_version()
+        # if version == 3.8:
+        if self.current_package_version() == semver.VersionInfo.parse("3.8.0"):
             name = '//*[@id="collectionsDropdown"]/ul[3]/li[2]/a/label'
             sort_by_name_sitem = BaseSelenium.locator_finder_by_xpath(self, name)
         else:
@@ -608,7 +611,8 @@ class CollectionPage(BaseSelenium):
 
     def select_schema_tab(self):
         """Selecting Schema tab from the collection submenu"""
-        if super().current_package_version() >= 3.8:
+        # if super().current_package_version() >= 3.8:
+        if self.current_package_version() >= semver.VersionInfo.parse("3.8.0"):
             select_schema_tab_sitem = BaseSelenium.locator_finder_by_xpath(self, self.select_schema_tab_id)
             select_schema_tab_sitem.click()
             time.sleep(2)
@@ -642,16 +646,15 @@ class CollectionPage(BaseSelenium):
         select_load_index_into_memory_sitem.click()
         time.sleep(2)
 
-    # # Loading and Unloading collection (deprecated)
-    # def select_settings_unload_btn(self):
-    #     self.select_settings_unload_btn_id = \
-    #         BaseSelenium.locator_finder_by_xpath(self, self.select_settings_unload_btn_id)
-    #     self.select_settings_unload_btn_id.click()
-    #     time.sleep(2)
+    def select_settings_unload_btn(self):
+        """Loading and Unloading collection (deprecated)"""
+        select_settings_unload_btn_sitem = self.locator_finder_by_id(self.select_settings_unload_btn_id)
+        select_settings_unload_btn_sitem.click()
+        time.sleep(2)
 
     def select_truncate_btn(self):
         """Loading and Unloading collection"""
-        select_truncate_btn_sitem = BaseSelenium.locator_finder_by_xpath(self, self.select_truncate_btn_id)
+        select_truncate_btn_sitem = BaseSelenium.locator_finder_by_id(self, self.select_truncate_btn_id)
         select_truncate_btn_sitem.click()
         time.sleep(1)
 

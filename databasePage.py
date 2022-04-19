@@ -3,6 +3,7 @@ import time
 from selenium.common.exceptions import TimeoutException
 
 from baseSelenium import BaseSelenium
+import semver
 
 
 class DatabasePage(BaseSelenium):
@@ -131,8 +132,9 @@ class DatabasePage(BaseSelenium):
 
         # ---------------------------------------database name convention test---------------------------------------
         print('Expected error scenario for the Database name Started \n')
-        version = super().current_package_version()
-        if version == 3.9:
+        # version = super().current_package_version()
+        # if version == 3.9:
+        if self.current_package_version() == semver.VersionInfo.parse("3.9.0"):
             db_name_error_input = ['@', '1', 'שלום']  # name must be 64 bit thus 65 character won't work too.
             db_name_print_statement = ['Checking Db name with symbol " @ "',
                                        'Checking numeric value for DB name " 1 "',
@@ -164,7 +166,7 @@ class DatabasePage(BaseSelenium):
                                                                 db_name_error)
         print('Expected error scenario for the Database name Completed \n')
 
-        if cluster == 3 and version == 3.9:
+        if cluster == 3 and self.current_package_version() == semver.VersionInfo.parse("3.9.0"):
             db = self.locator_finder_by_id('newDatabaseName')
             db.click()
             db.clear()
@@ -217,7 +219,7 @@ class DatabasePage(BaseSelenium):
                                                                     True)
             print('Expected error scenario for the Database Write Concern Completed \n')
 
-        if cluster == 3 and version == 3.8:
+        if cluster == 3 and self.current_package_version() == semver.VersionInfo.parse("3.8.0"):
             # -------------------------------database Replication Factor convention test------------------------------
             print('Expected error scenario for the Database Replication Factor Started \n')
             rf_error_input = ['@', 'a', '11', 'שלום']
@@ -260,7 +262,8 @@ class DatabasePage(BaseSelenium):
                                                                     wc_error_input,
                                                                     wc_print_statement,
                                                                     wc_error_message,
-                                                                    wc_name, wc_name_error)
+                                                                    wc_name,
+                                                                    wc_name_error)
             print('Expected error scenario for the Database Write Concern Completed \n')
 
         print('Closing the database creation \n')

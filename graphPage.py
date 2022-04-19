@@ -1,6 +1,7 @@
 import time
 from selenium.webdriver.common.keys import Keys
 from baseSelenium import BaseSelenium
+import semver
 
 
 class GraphPage(BaseSelenium):
@@ -241,7 +242,7 @@ class GraphPage(BaseSelenium):
         edge_definition = 'row_newEdgeDefinitions0'
         edge_text = '//*[@id="s2id_autogen21"]'
 
-        # selecting edge definition from auto suggestion
+        # selecting edge definition from auto-suggestion
         edge_definition = \
             BaseSelenium.locator_finder_by_id(self, edge_definition)
         edge_definition.click()
@@ -301,7 +302,8 @@ class GraphPage(BaseSelenium):
 
     # creating satellite graph
     def adding_satellite_graph(self):
-        if super().current_package_version() >= 3.8:
+        # if super().current_package_version() >= 3.8:
+        if self.current_package_version() >= semver.VersionInfo.parse("3.8.0"):
             self.select_graph_page()
             select_graph_id = self.select_create_graph_id
             select_graph_id = \

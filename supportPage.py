@@ -1,6 +1,7 @@
 import time
 
 from baseSelenium import BaseSelenium
+import semver
 
 
 class SupportPage(BaseSelenium):
@@ -266,13 +267,12 @@ class SupportPage(BaseSelenium):
         rest_api.click()
         time.sleep(1)
 
-        version = super().current_package_version()
+        # version = super().current_package_version()
+        if self.current_package_version() >= semver.VersionInfo.parse("3.7.0"):
+            # checking backup restore
+            iframe = self.switch_to_iframe_id
+            super().switch_to_iframe(iframe)
 
-        # checking backup restore
-        iframe = self.switch_to_iframe_id
-        super().switch_to_iframe(iframe)
-
-        if version >= 3.7:
             print('Checking Backup Restore option started\n')
             backup_restore = '//*[@id="operations-tag-BackupRestore"]'
             backup_restore = \
@@ -299,7 +299,7 @@ class SupportPage(BaseSelenium):
         upload_remote_repository = '//*[@id="operations-BackupRestore-UploadABackupToARemoteRepository"]/div/span[1]'
         upload_remote_repository01 = '//*[@id="operations-BackupRestore-UploadABackupToARemoteRepository"]/div/span[1]'
 
-        # making a list out of these documentation list
+        # making a list out of this documentation list
         backup_restore_list = [create_backup, create_backup01, delete_backup, delete_backup01,
                                download_backup, download_backup01, list_backup, list_backup01,
                                restore_backup, restore_backup01, upload_remote_repository, upload_remote_repository01]

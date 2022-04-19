@@ -167,7 +167,7 @@ class BaseSelenium:
 
     def switch_to_iframe(self, iframe_id):
         """This method will switch to IFrame window"""
-        self.driver.switch_to.frame(self.driver.find_element_by_xpath(iframe_id))
+        self.driver.switch_to.frame(self.driver.find_element(By.XPATH, iframe_id))
         time.sleep(1)
 
     def switch_back_to_origin_window(self):
@@ -196,10 +196,15 @@ class BaseSelenium:
         package_version = "currentVersion"
         package_version = BaseSelenium.locator_finder_by_id(self, package_version).text
         print("Package Version: ", package_version)
-        # version = float(package_version[0:3])
-        print('semver', semver.VersionInfo.parse(package_version))
-
         return semver.VersionInfo.parse(package_version)
+
+    def check_version_is_newer(self, compare_version):
+        """ check whether the version in the ui is the expected """
+        ui_version_str = self.locator_finder_by_id("currentVersion").text
+        print("Package Version: ", ui_version_str)
+        ui_version = semver.VersionInfo.parse(ui_version_str)
+        compare_version = semver.VersionInfo.parse(compare_version)
+        return ui_version >= compare_version
 
     def check_ui_responsiveness(self):
         """Checking LOG tab causes unresponsive UI (found in 3.8 server package)"""
@@ -277,7 +282,7 @@ class BaseSelenium:
         time.sleep(2)
 
     def clear_download_bar(self):
-        """This method will close the download bar from the chrome browser"""
+        """This method will close the download bar from the Chrome browser"""
         pass
         # print("closing download banner from the bottom \n")
         # keyboard = Controller()
@@ -352,7 +357,7 @@ class BaseSelenium:
     def switch_tab(self, locator):
         """This method will change tab and close it and finally return to origin tab"""
         self.locator = locator
-        self.locator.send_keys(Keys.CONTROL + Keys.RETURN)  # this will open new tab on top of current
+        self.locator.send_keys(Keys.CONTROL, Keys.RETURN)  # this will open new tab on top of current
         self.driver.switch_to.window(self.driver.window_handles[1])  # switch to new tab according to index value
         title = self.driver.title
         # print(title)
@@ -363,18 +368,18 @@ class BaseSelenium:
 
     def scroll(self, down=0):
         """This method will be used to scroll up and down to any page"""
-        self.driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        self.driver.find_element(By.TAG_NAME, 'html').send_keys(Keys.END)
 
         if down == 1:
             print("")
             time.sleep(3)
         else:
             time.sleep(5)
-            self.driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
+            self.driver.find_element(By.TAG_NAME, 'html').send_keys(Keys.HOME)
         # self.driver.execute_script("window.scrollTo(0,500)")
 
     def locator_finder_by_id(self, locator_name):
-        """This method will used for finding all the locators by their id"""
+        """This method will be used for finding all the locators by their id"""
         self.locator = WebDriverWait(self.driver, 10).until(
             ec.element_to_be_clickable((By.ID, locator_name))
         )
@@ -384,7 +389,7 @@ class BaseSelenium:
             return self.locator
 
     def locator_finder_by_xpath(self, locator_name):
-        """This method will used for finding all the locators by their xpath"""
+        """This method will be used for finding all the locators by their xpath"""
         self.locator = WebDriverWait(self.driver, 10).until(
             ec.element_to_be_clickable((By.XPATH, locator_name))
         )
@@ -393,32 +398,42 @@ class BaseSelenium:
         else:
             return self.locator
 
+    def locator_finder_by_link_text(self, locator_name):
+        """This method will be used for finding all the locators by their xpath"""
+        self.locator = WebDriverWait(self.driver, 10).until(
+            ec.element_to_be_clickable((By.LINK_TEXT, locator_name))
+        )
+        if self.locator is None:
+            print("UI-Test: ", locator_name, " locator has not found.")
+        else:
+            return self.locator
+
     def locator_finder_by_select(self, locator_name, value):
-        """This method will used for finding all the locators in drop down menu with options"""
-        self.select = Select(self.driver.find_element_by_id(locator_name))
+        """This method will be used for finding all the locators in drop down menu with options"""
+        self.select = Select(self.driver.find_element(By.ID, locator_name))
         self.select.select_by_index(value)
         if self.select is None:
             print("UI-Test: ", locator_name, " locator has not found.")
         return self.select
 
     def locator_finder_by_select_using_xpath(self, locator_name, value):
-        """This method will used for finding all the locators in drop down menu with options using xpath"""
-        self.select = Select(self.driver.find_element_by_xpath(locator_name))
+        """This method will be used for finding all the locators in drop down menu with options using xpath"""
+        self.select = Select(self.driver.find_element(By.XPATH, locator_name))
         self.select.select_by_index(value)
         if self.select is None:
             print("UI-Test: ", locator_name, " locator has not found.")
         return self.select
 
     def locator_finder_by_hover_item_id(self, locator):
-        """This method will used for finding all the locators and hover the mouse by id"""
-        item = self.driver.find_element_by_id(locator)
+        """This method will be used for finding all the locators and hover the mouse by id"""
+        item = self.driver.find_element(By.ID, locator)
         action = ActionChains(self.driver)
         action.move_to_element(item).click().perform()
         time.sleep(1)
         return action
 
     def locator_finder_by_class(self, locator_name):
-        """This method will used for finding all the locators by their id"""
+        """This method will be used for finding all the locators by their id"""
         self.locator = WebDriverWait(self.driver, 10).until(
             ec.element_to_be_clickable((By.CLASS_NAME, locator_name))
         )
@@ -497,18 +512,18 @@ class BaseSelenium:
             locator_sitem.send_keys(error_input[i])
             time.sleep(2)
 
-            version = self.current_package_version()
-            if version == 3.8:
+            if semver.VersionInfo.parse("3.8.0") <= self.current_package_version() \
+                    <= semver.VersionInfo.parse("3.8.100"):
                 locator_sitem.send_keys(Keys.TAB)
                 time.sleep(2)
             try:
                 # trying to create the db
-                if value is False and version == 3.9:
+                if value is False and self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
                     BaseSelenium.locator_finder_by_xpath(self, '//*[@id="modalButton1"]').click()
                     time.sleep(2)
                     # placeholder's error message id
                     error_sitem = BaseSelenium.locator_finder_by_xpath(self, error_message_id).text
-                elif value is False and version == 3.8:
+                elif value is False and self.current_package_version() == semver.VersionInfo.parse("3.8.0"):
                     error_sitem = BaseSelenium.locator_finder_by_xpath(self, error_message_id).text
                 else:
                     error_sitem = self.locator_finder_by_xpath(error_message_id).text
@@ -523,10 +538,49 @@ class BaseSelenium:
                 time.sleep(2)
 
                 # getting out from the db creation for the next check
-                if value is False and version == 3.9:
+                if value is False and self.current_package_version() == semver.VersionInfo.parse("3.9.0"):
                     self.driver.refresh()
                     BaseSelenium.locator_finder_by_id(self, 'createDatabase').click()
                     time.sleep(1)
+
+            except TimeoutException:
+                raise Exception('*****-->Error occurred. Manual inspection required<--***** \n')
+
+            i = i + 1
+
+    def check_expected_error_messages_for_views(self,
+                                                error_input,
+                                                print_statement,
+                                                error_message,
+                                                locators_id,
+                                                error_message_id):
+        """This method will take three lists and check for expected error condition against user's inputs"""
+        # looping through all the error scenario for test
+        i = 0
+        while i < len(error_input):  # error_input list will hold a list of error inputs from the users
+            print(print_statement[i])  # print_statement will hold a list of all general print statements for the test
+            # locator id of the input placeholder where testing will take place
+            locator_sitem = self.locator_finder_by_xpath(locators_id)
+            locator_sitem.click()
+            locator_sitem.clear()
+            locator_sitem.send_keys(error_input[i])
+            time.sleep(2)
+
+            if self.current_package_version() >= semver.VersionInfo.parse("3.8.0"):
+                locator_sitem.send_keys(Keys.TAB)
+                time.sleep(2)
+            try:
+                # trying to create the views
+                error_sitem = self.locator_finder_by_xpath(error_message_id).text
+
+                # error_message list will hold expected error messages
+                assert error_sitem == error_message[i], \
+                    f"FAIL: Expected error message {error_message[i]} but got {error_sitem}"
+
+                print('x' * (len(error_sitem) + 29))
+                print('OK: Expected error found: ', error_sitem)
+                print('x' * (len(error_sitem) + 29), '\n')
+                time.sleep(2)
 
             except TimeoutException:
                 raise Exception('*****-->Error occurred. Manual inspection required<--***** \n')
@@ -548,20 +602,20 @@ class BaseSelenium:
             print('This is not a Enterprise server package.\n')
 
     def zoom(self):
-        """This method will used for zoom in/out on any perspective window"""
+        """This method will be used for zoom in/out on any perspective window"""
         print("zooming in now\n")
         self.driver.execute_script("document.body.style.zoom='80%'")
 
     def locator_finder_by_hover_item(self, locator):
-        """This method will used for finding all the locators and hover the mouse by xpath"""
-        item = self.driver.find_element_by_xpath(locator)
+        """This method will be used for finding all the locators and hover the mouse by xpath"""
+        item = self.driver.find_element(By.XPATH, locator)
         action = ActionChains(self.driver)
         action.move_to_element(item).click().perform()
         time.sleep(1)
         return action
 
     def locator_finder_by_css_selectors(self, locator_name):
-        """This method will used for finding all the locators text using CSS Selector"""
+        """This method will be used for finding all the locators text using CSS Selector"""
         self.locator = WebDriverWait(self.driver, 10).until(
             ec.element_to_be_clickable((By.CSS_SELECTOR, locator_name))
         )
