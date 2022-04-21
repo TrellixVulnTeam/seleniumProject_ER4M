@@ -132,9 +132,7 @@ class DatabasePage(BaseSelenium):
 
         # ---------------------------------------database name convention test---------------------------------------
         print('Expected error scenario for the Database name Started \n')
-        # version = super().current_package_version()
-        # if version == 3.9:
-        if self.current_package_version() == semver.VersionInfo.parse("3.9.0"):
+        if self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
             db_name_error_input = ['@', '1', 'שלום']  # name must be 64 bit thus 65 character won't work too.
             db_name_print_statement = ['Checking Db name with symbol " @ "',
                                        'Checking numeric value for DB name " 1 "',
@@ -166,7 +164,7 @@ class DatabasePage(BaseSelenium):
                                                                 db_name_error)
         print('Expected error scenario for the Database name Completed \n')
 
-        if cluster == 3 and self.current_package_version() == semver.VersionInfo.parse("3.9.0"):
+        if cluster == 3 and self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
             db = self.locator_finder_by_id('newDatabaseName')
             db.click()
             db.clear()

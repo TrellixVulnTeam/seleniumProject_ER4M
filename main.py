@@ -380,12 +380,13 @@ class Test(BaseSelenium):
 
             self.views.delete_views('second_view', self.views.select_second_view_id)
 
+        self.views.checking_views_negative_scenario_for_views()
+
         print("Deleting views completed\n")
         self.login.logout_button()
         del self.login
         del self.views
         print("---------Checking Views completed--------- \n")
-        self.views.checking_views_negative_scenario_for_views()
         return 'views'
 
     def test_graph(self):
@@ -639,16 +640,16 @@ class Test(BaseSelenium):
         login.login('root', '')
 
         user = UserPage(self.driver)
-        # user.user_tab()
-        # user.add_new_user('tester')
-        # user.add_new_user('tester01')
-        #
-        db = DatabasePage(self.driver)
-        # db.create_new_db('Sharded', 0, self.deployment)  # 0 = sharded DB
-        # db.create_new_db('OneShard', 1, self.deployment)  # 1 = one shard DB
+        user.user_tab()
+        user.add_new_user('tester')
+        user.add_new_user('tester01')
 
-        # db.test_database_expected_error(self.deployment)  # testing expected error condition for database creation
-        # self.driver.back()
+        db = DatabasePage(self.driver)
+        db.create_new_db('Sharded', 0, self.deployment)  # 0 = sharded DB
+        db.create_new_db('OneShard', 1, self.deployment)  # 1 = one shard DB
+
+        db.test_database_expected_error(self.deployment)  # testing expected error condition for database creation
+        self.driver.back()
         db.select_database_page()
         print('Checking sorting databases to ascending and descending \n')
         db.sorting_db()

@@ -506,7 +506,6 @@ class BaseSelenium:
             print(print_statement[i])  # print_statement will hold a list of all general print statements for the test
             locators = locators_id  # locator id of the input placeholder where testing will take place
             locator_sitem = BaseSelenium.locator_finder_by_id(self, locators)
-
             locator_sitem.click()
             locator_sitem.clear()
             locator_sitem.send_keys(error_input[i])
@@ -538,7 +537,7 @@ class BaseSelenium:
                 time.sleep(2)
 
                 # getting out from the db creation for the next check
-                if value is False and self.current_package_version() == semver.VersionInfo.parse("3.9.0"):
+                if value is False and self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
                     self.driver.refresh()
                     BaseSelenium.locator_finder_by_id(self, 'createDatabase').click()
                     time.sleep(1)
