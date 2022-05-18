@@ -250,17 +250,17 @@ class CollectionPage(BaseSelenium):
         time.sleep(3)
         self.driver.refresh()
 
-        if name == 'TestDoc':
-            return [name, self.select_doc_collection_id]
-        elif name == 'TestEdge':
-            return [name, self.select_edge_collection_id]
-        elif name == 'Test':
-            return [name, self.select_test_doc_collection_id]
-        else:
-            print('Collection is not existed!! \n')
-
-        if cluster_status == 3:
-            return ['TestDocRenamed', self.select_renamed_doc_collection_id]
+        # if name == 'TestDoc':
+        #     return [name, self.select_doc_collection_id]
+        # elif name == 'TestEdge':
+        #     return [name, self.select_edge_collection_id]
+        # elif name == 'Test':
+        #     return [name, self.select_test_doc_collection_id]
+        # else:
+        #     print('Collection is not existed!! \n')
+        #
+        # if cluster_status == 3:
+        #     return ['TestDocRenamed', self.select_renamed_doc_collection_id]
 
     # ---------------------------------------------------------------------------#
 

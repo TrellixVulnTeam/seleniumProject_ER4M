@@ -1,6 +1,6 @@
 # import traceback
 import time
-
+import traceback
 import semver
 from analyzersPage import AnalyzerPage
 from baseSelenium import BaseSelenium
@@ -28,29 +28,20 @@ class Test(BaseSelenium):
         self.created_collections_list = []  # empty 2d list
 
     @staticmethod
-    def teardown(collection_name_list):
+    def teardown():
         """shutdown the driver"""
         # col = CollectionPage(CollectionPage.driver)  # creating collection page object
         # try:
-        #     print('Deletion for collection page Started \n')
-        #     # if collection_name_list[2] == 3:
-        #     #     col.delete_collection(collection_name_list[1][0][0], collection_name_list[1][0][1])
-        #     # else:
-        #     #     col.delete_collection("TestDocRenamed", col.select_renamed_doc_collection_id)
-        #     # col.delete_collection(collection_name_list[1][1][0], collection_name_list[1][1][1])
-        #     # col.delete_collection(collection_name_list[1][2][0], collection_name_list[1][2][1])
-        #
         #     for name, locator in collection_name_list[1]:
         #         col.delete_collection(name, locator)
         # finally:
         #     col.delete_collection("TestDocRenamed", col.select_renamed_doc_collection_id)
         #     print('Deletion for collection page Completed \n')
         #
-        # log = LoginPage(LoginPage.driver)
-        # log.logout_button()
+        log = LoginPage(LoginPage.driver)
+        log.logout_button()
         # del col
-        # del log
-        print('xxxxxxxxxx', collection_name_list, 'xxxxxxxxxx')
+        del log
         BaseSelenium.tear_down()
 
     # testing login page
@@ -121,152 +112,158 @@ class Test(BaseSelenium):
         self.login.login('root', '')
         self.col = CollectionPage(self.driver)  # creating obj for Collection
 
-        self.created_collections_list.append(self.col.create_new_collections('TestDoc', 0, self.deployment))
-        self.created_collections_list.append(self.col.create_new_collections('TestEdge', 1, self.deployment))
-        self.created_collections_list.append(self.col.create_new_collections('Test', 0, self.deployment))
+        self.exception = False
+        self.error = None
+        try:
+            self.col.create_new_collections('TestDoc', 0, self.deployment)
+            self.col.create_new_collections('TestEdge', 1, self.deployment)
+            self.col.create_new_collections('Test', 0, self.deployment)
 
-        print("checking Search options\n")
-        print("Searching using keyword 'Doc'\n")
-        self.col.checking_search_options("Doc")
-        self.driver.refresh()
-        print("Searching using keyword 'Edge'\n")
-        self.col.checking_search_options("Edge")
-        self.driver.refresh()
-        print("Searching using keyword 'test'\n")
-        self.col.checking_search_options("Test")
-        self.driver.refresh()
+            print("checking Search options\n")
+            print("Searching using keyword 'Doc'\n")
+            self.col.checking_search_options("Doc")
+            self.driver.refresh()
+            print("Searching using keyword 'Edge'\n")
+            self.col.checking_search_options("Edge")
+            self.driver.refresh()
+            print("Searching using keyword 'test'\n")
+            self.col.checking_search_options("Test")
+            self.driver.refresh()
 
-        self.col.select_collection_page()
+            self.col.select_collection_page()
 
-        print("Selecting Settings\n")
-        self.col.select_collection_settings()
-        print("Displaying system's collection\n")
-        self.col.display_system_collection()
-        self.col.display_system_collection()  # Doing the reverse part
-        print("Displaying Document type collection\n")
-        self.col.display_document_collection()
-        self.col.display_document_collection()
-        print("Displaying Edge type collection\n")
-        self.col.display_edge_collection()
-        self.col.display_edge_collection()
-        print("Displaying status loaded collection\n")
-        self.col.select_status_loaded()
-        self.col.select_status_loaded()
-        print("Displaying status unloaded collection\n")
-        self.col.select_status_unloaded()
-        self.col.select_status_unloaded()
-        print("Sorting collections by type\n")
-        self.col.sort_by_type()
-        print("Sorting collections by descending\n")
-        self.col.sort_descending()
-        self.col.sort_descending()
-        print("Sorting collections by name\n")
-        self.col.sort_by_name()
+            print("Selecting Settings\n")
+            self.col.select_collection_settings()
+            print("Displaying system's collection\n")
+            self.col.display_system_collection()
+            self.col.display_system_collection()  # Doing the reverse part
+            print("Displaying Document type collection\n")
+            self.col.display_document_collection()
+            self.col.display_document_collection()
+            print("Displaying Edge type collection\n")
+            self.col.display_edge_collection()
+            self.col.display_edge_collection()
+            print("Displaying status loaded collection\n")
+            self.col.select_status_loaded()
+            self.col.select_status_loaded()
+            print("Displaying status unloaded collection\n")
+            self.col.select_status_unloaded()
+            self.col.select_status_unloaded()
+            print("Sorting collections by type\n")
+            self.col.sort_by_type()
+            print("Sorting collections by descending\n")
+            self.col.sort_descending()
+            self.col.sort_descending()
+            print("Sorting collections by name\n")
+            self.col.sort_by_name()
 
-        self.driver.refresh()
-        self.col.select_edge_collection_upload()
-        print("Uploading file to the collection started\n")
-        self.col.select_upload_btn()
-        print("Uploading json file\n")
-        self.col.select_choose_file_btn('C:\\Users\\rearf\\Desktop\\collections\\edges.json')
-        self.col.select_confirm_upload_btn()
-        self.driver.refresh()  # in order to clear the screen before fetching data
-        print("Uploading " + self.col.getting_total_row_count() + " to the collection Completed\n")
-        print("Selecting size of the displayed\n")
+            self.driver.refresh()
+            self.col.select_edge_collection_upload()
+            print("Uploading file to the collection started\n")
+            self.col.select_upload_btn()
+            print("Uploading json file\n")
+            self.col.select_choose_file_btn('C:\\Users\\rearf\\Desktop\\collections\\edges.json')
+            self.col.select_confirm_upload_btn()
+            self.driver.refresh()  # in order to clear the screen before fetching data
+            print("Uploading " + self.col.getting_total_row_count() + " to the collection Completed\n")
+            print("Selecting size of the displayed\n")
 
-        self.driver.back()
+            self.driver.back()
 
-        self.col.select_doc_collection()
-        print("Uploading file to the collection started\n")
-        self.col.select_upload_btn()
-        print("Uploading json file\n")
-        self.col.select_choose_file_btn('C:\\Users\\rearf\\Desktop\\collections\\names_100.json')
-        self.col.select_confirm_upload_btn()
-        self.driver.refresh()  # in order to clear the screen before fetching data
-        print("Uploading " + self.col.getting_total_row_count() + " to the collection Completed\n")
-        print("Selecting size of the displayed\n")
+            self.col.select_doc_collection()
+            print("Uploading file to the collection started\n")
+            self.col.select_upload_btn()
+            print("Uploading json file\n")
+            self.col.select_choose_file_btn('C:\\Users\\rearf\\Desktop\\collections\\names_100.json')
+            self.col.select_confirm_upload_btn()
+            self.driver.refresh()  # in order to clear the screen before fetching data
+            print("Uploading " + self.col.getting_total_row_count() + " to the collection Completed\n")
+            print("Selecting size of the displayed\n")
 
-        print("Downloading Documents as JSON file\n")
-        self.col.download_doc_as_json()
+            print("Downloading Documents as JSON file\n")
+            self.col.download_doc_as_json()
 
-        print("Filter collection by '_id'\n")
-        self.col.filter_documents(3)
-        self.col.filter_documents(1)
-        self.col.display_document_size(2)  # choosing 50 results to display
-        print("Traverse back and forth search result page 1 and 2\n")
-        self.col.traverse_search_pages()
-        print("Selecting hand selection button\n")
-        self.col.select_hand_pointer()
-        print("Select Multiple item using hand pointer\n")
-        self.col.select_multiple_item()
-        self.col.move_btn()
-        print("Multiple data moving into test collection\n")
-        self.col.move_doc_textbox('Test')
-        self.col.move_confirm_btn()
+            print("Filter collection by '_id'\n")
+            self.col.filter_documents(3)
+            self.col.filter_documents(1)
+            self.col.display_document_size(2)  # choosing 50 results to display
+            print("Traverse back and forth search result page 1 and 2\n")
+            self.col.traverse_search_pages()
+            print("Selecting hand selection button\n")
+            self.col.select_hand_pointer()
+            print("Select Multiple item using hand pointer\n")
+            self.col.select_multiple_item()
+            self.col.move_btn()
+            print("Multiple data moving into test collection\n")
+            self.col.move_doc_textbox('Test')
+            self.col.move_confirm_btn()
 
-        print("Deleting multiple data started\n")
-        self.col.select_multiple_item()
-        self.col.select_collection_delete_btn()
-        self.col.collection_delete_confirm_btn()
-        self.col.collection_really_dlt_btn()
-        print("Deleting multiple data completed\n")
+            print("Deleting multiple data started\n")
+            self.col.select_multiple_item()
+            self.col.select_collection_delete_btn()
+            self.col.collection_delete_confirm_btn()
+            self.col.collection_really_dlt_btn()
+            print("Deleting multiple data completed\n")
 
-        print("Selecting Index menu\n")
-        self.col.select_index_menu()
-        print("Create new index\n")
-        self.col.create_new_index('Persistent', 1)
-        self.col.create_new_index('Geo', 2)
-        self.col.create_new_index('Fulltext', 3)
-        self.col.create_new_index('TTL', 4)
+            print("Selecting Index menu\n")
+            self.col.select_index_menu()
+            print("Create new index\n")
+            self.col.create_new_index('Persistent', 1)
+            self.col.create_new_index('Geo', 2)
+            self.col.create_new_index('Fulltext', 3)
+            self.col.create_new_index('TTL', 4)
 
-        if self.current_package_version() == semver.VersionInfo.parse("3.9.0"):
-            self.col.create_new_index('ZKD', 5)
-            print("Deleting all index started\n")
-            for i in range(4):
-                self.col.delete_all_index()
-            print("Deleting all index completed\n")
-        else:
-            print("Deleting all index started\n")
-            for i in range(3):
-                self.col.delete_all_index()
-            print("Deleting all index completed\n")
-
-        print("Select Info tab\n")
-        self.col.select_info_tab()
-        print("Selecting Schema Tab\n")
-        self.col.select_schema_tab()
-
-        print("Select Settings tab\n")
-        self.col.select_settings_tab()
-        if self.deployment == 3:
-            print('Rename collection is not supported in Cluster deployment thus skipped \n')
-        else:
-            self.col.rename_collection()  # rename collection name is not allowed on other deployment mode
-            if semver.VersionInfo.parse("3.8.0") <= self.current_package_version() \
-                    <= semver.VersionInfo.parse("3.8.100"):
-                print("Loading and Unloading collection\n")
-                self.col.select_settings_unload_btn()  # might be deprecated feature
-                self.col.select_settings_unload_btn()
+            if self.current_package_version() == semver.VersionInfo.parse("3.9.0"):
+                self.col.create_new_index('ZKD', 5)
+                print("Deleting all index started\n")
+                for i in range(4):
+                    self.col.delete_all_index()
+                print("Deleting all index completed\n")
             else:
-                print('Loading unloading is deprecated for the current package version.')
-        self.driver.refresh()
-        print("Truncate collection\n")
-        self.col.select_truncate_btn()
-        self.driver.refresh()
+                print("Deleting all index started\n")
+                for i in range(3):
+                    self.col.delete_all_index()
+                print("Deleting all index completed\n")
 
-        print('Deletion for collection page started. \n')
-        self.col.delete_collection("TestDoc", self.col.select_doc_collection_id)
-        self.col.delete_collection("TestEdge", self.col.select_edge_collection_id)
-        self.col.delete_collection("Test", self.col.select_test_doc_collection_id)
-        self.col.delete_collection("TestDocRenamed", self.col.select_renamed_doc_collection_id)
-        print('Deletion for collection page Completed \n')
+            print("Select Info tab\n")
+            self.col.select_info_tab()
+            print("Selecting Schema Tab\n")
+            self.col.select_schema_tab()
 
-        del self.col
-        self.login.logout_button()
-        del self.login
-        print("---------Checking Collection Completed--------- \n")
+            print("Select Settings tab\n")
+            self.col.select_settings_tab()
+            if self.deployment == 3:
+                print('Rename collection is not supported in Cluster deployment thus skipped \n')
+            else:
+                self.col.rename_collection()  # rename collection name is not allowed on other deployment mode
+                if semver.VersionInfo.parse("3.8.0") <= self.current_package_version() \
+                        <= semver.VersionInfo.parse("3.8.100"):
+                    print("Loading and Unloading collection\n")
+                    self.col.select_settings_unload_btn()  # might be deprecated feature
+                    self.col.select_settings_unload_btn()
+                else:
+                    print('Loading unloading is deprecated for the current package version.')
+            self.driver.refresh()
+            print("Truncate collection\n")
+            self.col.select_truncate_btn()
+            self.driver.refresh()
+            print("---------Checking Collection Completed--------- \n")
 
-        return 'collection', self.created_collections_list, self.deployment
+        except BaseException:
+            print('x' * 45, "\nINFO: Error Occurred! Force Deletion Started\n", 'x' * 45)
+            self.exception = True  # mark the exception as true
+            self.error = traceback.format_exc()
+
+        finally:
+            print("Collection deletion started.")
+            self.col.delete_collection("TestDoc", self.col.select_doc_collection_id)
+            self.col.delete_collection("TestEdge", self.col.select_edge_collection_id)
+            self.col.delete_collection("Test", self.col.select_test_doc_collection_id)
+            self.col.delete_collection("TestDocRenamed", self.col.select_renamed_doc_collection_id)
+            print("Collection deletion completed.")
+
+            if self.exception:
+                raise Exception(self.error)
 
     def test_views(self):
         print("---------Checking Views Begin--------- \n")
@@ -279,115 +276,118 @@ class Test(BaseSelenium):
             self.login.login('root', '')
         self.views = ViewsPage(self.driver)  # creating obj for viewPage
 
-        print("Selecting Views tab\n")
-        self.views.select_views_tab()
+        self.exception = False
+        self.error = None
+        try:
+            print("Selecting Views tab\n")
+            self.views.select_views_tab()
 
-        # checking 3.9 for improved views
-        if self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
-            print('Creating improved views start here \n')
-            self.views.create_improved_views('improved_arangosearch_view_01', 0)
-            self.driver.refresh()
-            time.sleep(4)
-            self.views.create_improved_views('improved_arangosearch_view_02', 1)
-            print('Creating improved views completed \n')
+            # creating v3.9.x and v3.10.x for improved views
+            if self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
+                print('Creating improved views start here \n')
+                self.views.create_improved_views('improved_arangosearch_view_01', 0)
+                self.driver.refresh()
+                time.sleep(4)
+                self.views.create_improved_views('improved_arangosearch_view_02', 1)
+                print('Creating improved views completed \n')
 
-            # Checking improved views
-            if semver.VersionInfo.parse("3.8.100") < self.current_package_version() < semver.VersionInfo.parse("3.9.100"):
-                self.views.checking_improved_views('improved_arangosearch_view_01',
-                                                   self.views.select_improved_arangosearch_view_01, self.deployment)
-                print('Deleting views started \n')
+                # Checking improved views for v3.9.x
+                if semver.VersionInfo.parse("3.8.100") < self.current_package_version() < semver.VersionInfo.parse(
+                        "3.9.100"):
+                    self.views.checking_improved_views('improved_arangosearch_view_01',
+                                                       self.views.select_improved_arangosearch_view_01, self.deployment)
+
+            elif self.current_package_version() <= semver.VersionInfo.parse("3.8.100"):
+                self.views.create_new_views('firstView')
+                self.views.create_new_views('secondView')
+
+                self.views.select_views_settings()
+                print("Sorting views to descending\n")
+                self.views.select_sorting_views()
+                print("Sorting views to ascending\n")
+                self.views.select_sorting_views()
+
+                print("search views option testing\n")
+                self.views.search_views("secondView", self.views.search_second_view)
+                self.views.search_views("firstView", self.views.search_first_view)
+
+                print("Selecting first Views \n")
+                self.views.select_first_view()
+                print("Selecting collapse button \n")
+                self.views.select_collapse_btn()
+                print("Selecting expand button \n")
+                self.views.select_expand_btn()
+                print("Selecting editor mode \n")
+                self.views.select_editor_mode_btn(0)
+                print("Switch editor mode to Code \n")
+                self.views.switch_to_code_editor_mode()
+                print("Switch editor mode to Compact mode Code \n")
+                self.views.compact_json_data()
+
+                print("Selecting editor mode \n")
+                self.views.select_editor_mode_btn(1)
+                print("Switch editor mode to Tree \n")
+                self.views.switch_to_tree_editor_mode()
+
+                print("Clicking on ArangoSearch documentation link \n")
+                self.views.click_arangosearch_documentation_link()
+                print("Selecting search option\n")
+                self.views.select_inside_search("i")
+                print("Traversing all results up and down \n")
+                self.views.search_result_traverse_down()
+                self.views.search_result_traverse_up()
+
                 if self.deployment == 3:
-                    self.views.delete_views('improved_arangosearch_view_01',
-                                            self.views.select_improved_arangosearch_view_01)
-                    self.views.delete_views('improved_arangosearch_view_02',
-                                            self.views.select_improved_arangosearch_view_02)
-
+                    print('View rename is disabled in Cluster mode \n')
                 else:
-                    self.views.delete_views('modified_views_name', self.views.select_modified_views_name)
-                    self.views.delete_views('improved_arangosearch_view_02',
-                                            self.views.select_improved_arangosearch_view_02)
+                    print("Rename firstViews to thirdViews started \n")
+                    self.views.clicking_rename_views_btn()
+                    self.views.rename_views_name("thirdView")
+                    self.views.rename_views_name_confirm()
+                    print("Rename the current Views completed \n")
+                self.driver.back()
 
-            # checking improved view for 3.10.0
-            if self.current_package_version() >= semver.VersionInfo.parse("3.10.0"):
+            # checking negative scenarios for all package version
+            self.views.checking_views_negative_scenario_for_views()
+
+        except BaseException:
+            print('x' * 45, "\nINFO: Error Occurred! Force Deletion Started\n", 'x' * 45)
+            self.exception = True  # mark the exception as true
+            self.error = traceback.format_exc()
+
+        finally:
+            # checking and deleting improved view for v3.9.x
+            if semver.VersionInfo.parse("3.8.100") < self.current_package_version() < semver.VersionInfo.parse(
+                    "3.9.100"):
+                print("Views deletion started for >= v3.9.x \n")
+                self.views.delete_views('improved_arangosearch_view_01',
+                                        self.views.select_improved_arangosearch_view_01)
+                self.views.delete_views('modified_views_name', self.views.select_modified_views_name)
+                self.views.delete_views('improved_arangosearch_view_02',
+                                        self.views.select_improved_arangosearch_view_02)
+                print("Views deletion completed for >= v3.9.x \n")
+
+            # deleting improved views for v3.10.x
+            elif self.current_package_version() >= semver.VersionInfo.parse("3.10.0"):
                 self.views.checking_modified_views(self.deployment)
-                print('Deleting views started \n')
-                if self.deployment == 3:
-                    self.views.delete_new_views('improved_arangosearch_view_01')
-                    self.views.delete_new_views('improved_arangosearch_view_02')
-                else:
-                    self.views.delete_new_views('modified_views_name')
-                    self.views.delete_new_views('improved_arangosearch_view_02')
+                print('Deleting views started for >= v3.10.x\n')
+                self.views.delete_new_views('improved_arangosearch_view_01')
+                self.views.delete_new_views('modified_views_name')
+                self.views.delete_new_views('improved_arangosearch_view_02')
+                print('Deleting views completed for >= v3.10.x\n')
 
-            print('Deleting views completed \n')
-            # self.views.checking_views_negative_scenario_for_views()
-
-        elif self.current_package_version() <= semver.VersionInfo.parse("3.8.100"):
-            self.views.create_new_views('firstView')
-            self.views.create_new_views('secondView')
-
-            self.views.select_views_settings()
-
-            print("Sorting views to descending\n")
-            self.views.select_sorting_views()
-            print("Sorting views to ascending\n")
-            self.views.select_sorting_views()
-
-            print("search views option testing\n")
-            self.views.search_views("secondView", self.views.search_second_view)
-            self.views.search_views("firstView", self.views.search_first_view)
-
-            print("Selecting first Views \n")
-            self.views.select_first_view()
-            print("Selecting collapse button \n")
-            self.views.select_collapse_btn()
-            print("Selecting expand button \n")
-            self.views.select_expand_btn()
-            print("Selecting editor mode \n")
-            self.views.select_editor_mode_btn(0)
-            print("Switch editor mode to Code \n")
-            self.views.switch_to_code_editor_mode()
-            print("Switch editor mode to Compact mode Code \n")
-            self.views.compact_json_data()
-
-            print("Selecting editor mode \n")
-            self.views.select_editor_mode_btn(1)
-            print("Switch editor mode to Tree \n")
-            self.views.switch_to_tree_editor_mode()
-
-            print("Clicking on ArangoSearch documentation link \n")
-            self.views.click_arangosearch_documentation_link()
-            print("Selecting search option\n")
-            self.views.select_inside_search("i")
-            print("Traversing all results up and down \n")
-            self.views.search_result_traverse_down()
-            self.views.search_result_traverse_up()
-
-            if self.deployment == 3:
-                print('View rename is disabled in Cluster mode \n')
-            else:
-                print("Rename firstViews to thirdViews started \n")
-                self.views.clicking_rename_views_btn()
-                self.views.rename_views_name("thirdView")
-                self.views.rename_views_name_confirm()
-                print("Rename the current Views completed \n")
-            self.driver.back()
-
-            print("Deleting views started \n")
-            if self.deployment == 3:
+            # deleting views for <= v3.8.x
+            if self.current_package_version() <= semver.VersionInfo.parse("3.8.100"):
+                print("Deleting views started for <= v3.8.x\n")
                 self.views.delete_views('first_view', self.views.select_first_view_id)
-            else:
                 self.views.delete_views('renamed_view', self.views.select_renamed_view_id)
+                self.views.delete_views('second_view', self.views.select_second_view_id)
+                print('Deleting views completed for <= v3.8.x \n')
 
-            self.views.delete_views('second_view', self.views.select_second_view_id)
-
-        self.views.checking_views_negative_scenario_for_views()
-
-        print("Deleting views completed\n")
-        self.login.logout_button()
-        del self.login
-        del self.views
-        print("---------Checking Views completed--------- \n")
-        return 'views'
+            del self.views
+            print("---------Checking Views completed--------- \n")
+            if self.exception:
+                raise Exception(self.error)
 
     def test_graph(self):
         print("---------Checking Graphs started--------- \n")
@@ -898,15 +898,15 @@ class Test(BaseSelenium):
 
 
 ui = Test()  # creating obj for the UI test
-# test_name = ui.test_login()  # testing Login functionality
-# test_name = ui.test_dashboard()  # testing Dashboard functionality
-# test_name = ui.test_collection()  # testing Collection tab
-test_name = ui.test_views()  # testing views functionality
-# test_name = ui.test_query()  # testing query functionality **needs cluster deployment
-# test_name = ui.test_graph()  # testing graph functionality **needs cluster deployment
-# test_name = ui.test_service()  # testing service page
-# test_name = ui.test_database()  # testing database page
-# test_name = ui.test_support()  # testing support tab functionality
-# test_name = ui.test_user()  # testing User functionality
-# test_name = ui.test_analyzers()  # testing analyzers p1age  # supports only 3.9* versions
-ui.teardown(test_name)  # close the driver and quit
+# ui.test_login()  # testing Login functionality
+# ui.test_dashboard()  # testing Dashboard functionality
+# ui.test_collection()  # testing Collection tab
+ui.test_views()  # testing views functionality
+# ui.test_query()  # testing query functionality **needs cluster deployment
+# ui.test_graph()  # testing graph functionality **needs cluster deployment
+# ui.test_service()  # testing service page
+# ui.test_database()  # testing database page
+# ui.test_support()  # testing support tab functionality
+# ui.test_user()  # testing User functionality
+# ui.test_analyzers()  # testing analyzers page  # supports only 3.9* versions
+ui.teardown()  # close the driver and quit

@@ -57,14 +57,14 @@ class DatabasePage(BaseSelenium):
             if super().check_server_package() == 'COMMUNITY EDITION':
                 pass
             elif super().check_server_package() == 'ENTERPRISE EDITION':
-                # selecting sharded option from drop down using index
+                # selecting sharded option from dropdown using index
                 select_sharded_db = 'newSharding'
                 BaseSelenium.locator_finder_by_select(self, select_sharded_db, index)
                 time.sleep(1)
             else:
                 print('Can not determined the ')
 
-        # selecting user option from drop down using index for choosing root user.
+        # selecting user option from dropdown using index for choosing root user.
         select_user = 'newUser'
         BaseSelenium.locator_finder_by_select(self, select_user, 0)  # 0 for root user
         time.sleep(1)

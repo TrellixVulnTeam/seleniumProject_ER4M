@@ -486,8 +486,8 @@ class BaseSelenium:
                 print('x' * (len(error_sitem) + 23), '\n')
                 time.sleep(2)
 
-            except TimeoutException:
-                raise Exception('*****-->Error occurred. Manual inspection required<--***** \n')
+            except TimeoutException as ex:
+                raise Exception(f'{ex} Error occurred. Manual inspection required\n')
 
             i = i + 1
 
@@ -542,8 +542,8 @@ class BaseSelenium:
                     BaseSelenium.locator_finder_by_id(self, 'createDatabase').click()
                     time.sleep(1)
 
-            except TimeoutException:
-                raise Exception('*****-->Error occurred. Manual inspection required<--***** \n')
+            except TimeoutException as ex:
+                raise Exception(f'{ex} Error occurred. Manual inspection required\n')
 
             i = i + 1
 
@@ -581,8 +581,8 @@ class BaseSelenium:
                 print('x' * (len(error_sitem) + 29), '\n')
                 time.sleep(2)
 
-            except TimeoutException:
-                raise Exception('*****-->Error occurred. Manual inspection required<--***** \n')
+            except TimeoutException as ex:
+                raise Exception(f'{ex} Error occurred. Manual inspection required\n')
 
             i = i + 1
 
