@@ -340,6 +340,7 @@ class ServicePage(BaseSelenium):
                     self.locator_finder_by_id(intersection).click()
                     time.sleep(3)
 
+                    self.driver.close()
                     print('Switching back to original window \n')
                     self.driver.switch_to.window(self.driver.window_handles[0])
 
@@ -471,6 +472,8 @@ class ServicePage(BaseSelenium):
         install_btn_sitem.click()
         time.sleep(2)
 
+        self.select_service_page()
+
         # at this point it will be back to service page
         print('Selecting graphql service \n')
         graphql_service = "//*[text()='demo-graphql']"
@@ -484,13 +487,14 @@ class ServicePage(BaseSelenium):
         graphql_interface_stiem.click()
 
         print('Switching to code mirror windows of graphql \n')
-        self.driver.switch_to.window(self.driver.window_handles[2])
+        self.driver.switch_to.window(self.driver.window_handles[1])
 
         graphql_interface_execute_btn = '//*[@id="graphiql-container"]/div[1]/div[1]/div/div[2]/button'
         graphql_interface_execute_btn_sitem = \
             self.locator_finder_by_xpath(graphql_interface_execute_btn)
         graphql_interface_execute_btn_sitem.click()
-
+        time.sleep(2)
+        self.driver.close()
         print('Return back to original window \n')
         self.driver.switch_to.window(self.driver.window_handles[0])
 

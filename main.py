@@ -1,4 +1,3 @@
-# import traceback
 import time
 import traceback
 import semver
@@ -44,7 +43,6 @@ class Test(BaseSelenium):
         del log
         BaseSelenium.tear_down()
 
-    # testing login page
     def test_login(self):
         print("Starting ", self.driver.title, "\n")
         self.login = LoginPage(self.driver)
@@ -118,6 +116,10 @@ class Test(BaseSelenium):
             self.col.create_new_collections('TestDoc', 0, self.deployment)
             self.col.create_new_collections('TestEdge', 1, self.deployment)
             self.col.create_new_collections('Test', 0, self.deployment)
+            self.col.create_new_collections('ComputedValueCol', 0, self.deployment)
+
+            if self.current_package_version() >= semver.VersionInfo.parse("3.9.100"):
+                self.col.test_computed_values()
 
             print("checking Search options\n")
             print("Searching using keyword 'Doc'\n")
@@ -180,8 +182,8 @@ class Test(BaseSelenium):
             print("Uploading " + self.col.getting_total_row_count() + " to the collection Completed\n")
             print("Selecting size of the displayed\n")
 
-            print("Downloading Documents as JSON file\n")
-            self.col.download_doc_as_json()
+            # print("Downloading Documents as JSON file\n")
+            # self.col.download_doc_as_json()
 
             print("Filter collection by '_id'\n")
             self.col.filter_documents(3)
@@ -212,12 +214,15 @@ class Test(BaseSelenium):
             self.col.create_new_index('Geo', 2)
             self.col.create_new_index('Fulltext', 3)
             self.col.create_new_index('TTL', 4)
+            if self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
+                if self.current_package_version() > semver.VersionInfo.parse("3.9.99"):
+                    self.col.create_new_index('ZKD', 5, True)
+                # else:
+                #     self.col.create_new_index('ZKD', 5)
 
-            if self.current_package_version() == semver.VersionInfo.parse("3.9.0"):
-                self.col.create_new_index('ZKD', 5)
                 print("Deleting all index started\n")
                 for i in range(4):
-                    self.col.delete_all_index()
+                    self.col.delete_all_index(True)
                 print("Deleting all index completed\n")
             else:
                 print("Deleting all index started\n")
@@ -260,6 +265,7 @@ class Test(BaseSelenium):
             self.col.delete_collection("TestEdge", self.col.select_edge_collection_id)
             self.col.delete_collection("Test", self.col.select_test_doc_collection_id)
             self.col.delete_collection("TestDocRenamed", self.col.select_renamed_doc_collection_id)
+            self.col.delete_collection("ComputedValueCol", self.col.select_computedValueCol_id)
             print("Collection deletion completed.")
 
             if self.exception:
@@ -297,7 +303,13 @@ class Test(BaseSelenium):
                     self.views.checking_improved_views('improved_arangosearch_view_01',
                                                        self.views.select_improved_arangosearch_view_01, self.deployment)
 
-            elif self.current_package_version() <= semver.VersionInfo.parse("3.8.100"):
+                # Checking improved views for v3.10.x
+                if self.current_package_version() > semver.VersionInfo.parse("3.9.100"):
+                    self.views.checking_improved_views_for_v310('improved_arangosearch_view_01',
+                                                                self.views.select_improved_arangosearch_view_01,
+                                                                self.deployment)
+
+            elif self.current_package_version() < semver.VersionInfo.parse("3.9.0"):
                 self.views.create_new_views('firstView')
                 self.views.create_new_views('secondView')
 
@@ -356,9 +368,16 @@ class Test(BaseSelenium):
             self.error = traceback.format_exc()
 
         finally:
-            # checking and deleting improved view for v3.9.x
-            if semver.VersionInfo.parse("3.8.100") < self.current_package_version() < semver.VersionInfo.parse(
-                    "3.9.100"):
+            # deleting views for <= v3.8.x
+            if self.current_package_version() < semver.VersionInfo.parse("3.9.0"):
+                print("Deleting views started for <= v3.8.x\n")
+                self.views.delete_views('first_view', self.views.select_first_view_id)
+                self.views.delete_views('renamed_view', self.views.select_renamed_view_id)
+                self.views.delete_views('second_view', self.views.select_second_view_id)
+                print('Deleting views completed for <= v3.8.x \n')
+
+            elif semver.VersionInfo.parse("3.8.100") < self.current_package_version() \
+                    < semver.VersionInfo.parse("3.9.100"):
                 print("Views deletion started for >= v3.9.x \n")
                 self.views.delete_views('improved_arangosearch_view_01',
                                         self.views.select_improved_arangosearch_view_01)
@@ -368,21 +387,16 @@ class Test(BaseSelenium):
                 print("Views deletion completed for >= v3.9.x \n")
 
             # deleting improved views for v3.10.x
-            elif self.current_package_version() >= semver.VersionInfo.parse("3.10.0"):
-                self.views.checking_modified_views(self.deployment)
+            elif self.current_package_version() > semver.VersionInfo.parse("3.9.100"):
+                print("Selecting Views tab\n")
+                self.views.select_views_tab()
+
                 print('Deleting views started for >= v3.10.x\n')
                 self.views.delete_new_views('improved_arangosearch_view_01')
                 self.views.delete_new_views('modified_views_name')
                 self.views.delete_new_views('improved_arangosearch_view_02')
+                self.views.delete_created_collection('my_collection')
                 print('Deleting views completed for >= v3.10.x\n')
-
-            # deleting views for <= v3.8.x
-            if self.current_package_version() <= semver.VersionInfo.parse("3.8.100"):
-                print("Deleting views started for <= v3.8.x\n")
-                self.views.delete_views('first_view', self.views.select_first_view_id)
-                self.views.delete_views('renamed_view', self.views.select_renamed_view_id)
-                self.views.delete_views('second_view', self.views.select_second_view_id)
-                print('Deleting views completed for <= v3.8.x \n')
 
             del self.views
             print("---------Checking Views completed--------- \n")
@@ -521,46 +535,56 @@ class Test(BaseSelenium):
 
         return 'graph'
 
-    # testing Service page
     def test_service(self):
         print("Starting ", self.driver.title, "\n")
         self.login = LoginPage(self.driver)
         self.login.login('root', '')
-
         self.service = ServicePage(self.driver)
-        self.service.select_service_page()
-        self.service.select_add_service_button()
-        self.service.service_search_option('demo')
-        self.service.service_search_option('tab')
-        self.service.service_search_option('grafana')
-        self.service.service_category_option()
-        self.service.select_category_option_from_list('connector')
-        self.service.select_category_option_from_list('service')
-        self.service.select_category_option_from_list('geo')
-        self.service.select_category_option_from_list('demo')
-        self.service.select_category_option_from_list('graphql')
-        self.service.select_category_option_from_list('prometheus')
-        self.service.select_category_option_from_list('monitoring')
+        self.exception = False
+        self.error = None
+        try:
+            self.service.select_service_page()
+            self.service.select_add_service_button()
+            self.service.service_search_option('demo')
+            self.service.service_search_option('tab')
+            self.service.service_search_option('grafana')
+            self.service.service_category_option()
+            self.service.select_category_option_from_list('connector')
+            self.service.select_category_option_from_list('service')
+            self.service.select_category_option_from_list('geo')
+            self.service.select_category_option_from_list('demo')
+            self.service.select_category_option_from_list('graphql')
+            self.service.select_category_option_from_list('prometheus')
+            self.service.select_category_option_from_list('monitoring')
 
-        self.service.select_category_option_search_filter('geo')
-        self.service.select_category_option_search_filter('demo')
-        self.service.select_category_option_search_filter('connector')
+            self.service.select_category_option_search_filter('geo')
+            self.service.select_category_option_search_filter('demo')
+            self.service.select_category_option_search_filter('connector')
 
-        # self.service.checking_demo_geo_s2_service_github()
-        self.service.install_demo_geo_s2_service('/geo')
-        self.service.check_demo_geo_s2_service_api()
-        self.service.inspect_demo_geo_foxx_leaflet_iframe()
+            # TODO fix me github link broken
+            # self.service.checking_demo_geo_s2_service_github()
+            self.service.install_demo_geo_s2_service('/geo')
+            self.service.check_demo_geo_s2_service_api()
+            self.service.inspect_demo_geo_foxx_leaflet_iframe()
+            self.service.install_demo_graph_hql_service('/graphql')
+            self.service.replace_service()
 
-        self.service.install_demo_graph_hql_service('/graphql')
+        except BaseException:
+            print('x' * 45, "\nINFO: Error Occurred! Force Deletion Started\n", 'x' * 45)
+            self.exception = True  # mark the exception as true
+            self.error = traceback.format_exc()
+        finally:
+            print("Service deletion started.")
+            self.service.delete_service('/geo')
+            self.service.delete_service('/graphql')
+            print("Service deletion completed")
+            del self.login
+            del self.service
 
-        self.service.replace_service()
-
-        self.service.delete_service('/geo')
-        self.service.delete_service('/graphql')
-
-        del self.login
-        del self.service
-        return 'service'
+            if self.exception:
+                raise Exception(self.error)
+            print("---------Service Page Test Completed--------- \n")
+            return 'service'
 
     def test_user(self):
         print("---------User Test Begin--------- \n")
@@ -638,41 +662,49 @@ class Test(BaseSelenium):
         print("---------DataBase Page Test Begin--------- \n")
         login = LoginPage(self.driver)
         login.login('root', '')
-
         user = UserPage(self.driver)
-        user.user_tab()
-        user.add_new_user('tester')
-        user.add_new_user('tester01')
-
+        self.exception = False
+        self.error = None
         db = DatabasePage(self.driver)
-        db.create_new_db('Sharded', 0, self.deployment)  # 0 = sharded DB
-        db.create_new_db('OneShard', 1, self.deployment)  # 1 = one shard DB
+        try:
+            user.user_tab()
+            user.add_new_user('tester')
+            user.add_new_user('tester01')
 
-        db.test_database_expected_error(self.deployment)  # testing expected error condition for database creation
-        self.driver.back()
-        db.select_database_page()
-        print('Checking sorting databases to ascending and descending \n')
-        db.sorting_db()
+            db = DatabasePage(self.driver)
+            db.create_new_db('Sharded', 0, self.deployment)  # 0 = sharded DB
+            db.create_new_db('OneShard', 1, self.deployment)  # 1 = one shard DB
 
-        print('Checking search database functionality \n')
-        db.searching_db('Sharded')
-        db.searching_db('OneShard')
+            db.test_database_expected_error(self.deployment)  # testing expected error condition for database creation
+            self.driver.back()
+            db.select_database_page()
+            print('Checking sorting databases to ascending and descending \n')
+            db.sorting_db()
 
-        db.deleting_database('Sharded')
-        db.deleting_database('OneShard')
+            print('Checking search database functionality \n')
+            db.searching_db('Sharded')
+            db.searching_db('OneShard')
 
-        # need to add delete created user here
-        user.user_tab()
-        db.deleting_user('tester')
-        db.deleting_user('tester01')
+        except BaseException:
+            print('x' * 45, "\nINFO: Error Occurred! Force Deletion Started\n", 'x' * 45)
+            self.exception = True  # mark the exception as true
+            self.error = traceback.format_exc()
 
-        login.logout_button()
-        del user
-        del db
-        del login
-        print("---------DataBase Page Test Completed--------- \n")
+        finally:
+            print("Database deletion started.")
+            db.deleting_database('Sharded')
+            db.deleting_database('OneShard')
+            # need to delete created user
+            user.user_tab()
+            db.deleting_user('tester')
+            db.deleting_user('tester01')
 
-        return 'database'
+            print("Database deletion completed.")
+            del user
+            del db
+            print("---------DataBase Page Test Completed--------- \n")
+            if self.exception:
+                raise Exception(self.error)
 
     def test_analyzers(self):
         print("---------Analyzers Page Test Begin--------- \n")
@@ -680,122 +712,146 @@ class Test(BaseSelenium):
         login.login('root', '')
         analyzers = AnalyzerPage(self.driver)
 
-        # version = analyzers.current_package_version()
-        # if version >= 3.9:
-        if self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
-            analyzers.select_analyzers_page()
-            analyzers.select_help_filter_btn()
+        self.exception = False
+        self.error = None
+        package_version = self.current_package_version()
+        try:
+            if self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
+                analyzers.select_analyzers_page()
+                # analyzers.select_help_filter_btn()
 
-            print('Showing in-built Analyzers list \n')
-            analyzers.select_built_in_analyzers_open()
+                print('Showing in-built Analyzers list \n')
+                analyzers.select_built_in_analyzers_open()
 
-            print('Checking in-built identity analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.identity_analyzer, analyzers.identity_analyzer_switch_view)
-            print('Checking in-built text_de analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_de, analyzers.text_de_switch_view)
-            print('Checking in-built text_en analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_en, analyzers.text_en_switch_view)
-            print('Checking in-built text_es analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_es, analyzers.text_es_switch_view)
-            print('Checking in-built text_fi analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_fi, analyzers.text_fi_switch_view)
-            print('Checking in-built text_fr analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_fr, analyzers.text_fr_switch_view)
-            print('Checking in-built text_it analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_it, analyzers.text_it_switch_view)
-            print('Checking in-built text_nl analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_nl, analyzers.text_nl_switch_view)
-            print('Checking in-built text_no analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_no, analyzers.text_no_switch_view)
-            print('Checking in-built text_pt analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_pt, analyzers.text_pt_switch_view)
-            print('Checking in-built text_ru analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_ru, analyzers.text_ru_switch_view)
-            print('Checking in-built text_sv analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_sv, analyzers.text_sv_switch_view)
-            print('Checking in-built text_zh analyzer \n')
-            analyzers.select_analyzer_to_check(analyzers.text_zh, analyzers.text_zh_switch_view)
+                print('Checking in-built identity analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.identity_analyzer, analyzers.identity_analyzer_switch_view)
+                print('Checking in-built text_de analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_de, analyzers.text_de_switch_view)
+                print('Checking in-built text_en analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_en, analyzers.text_en_switch_view)
+                print('Checking in-built text_es analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_es, analyzers.text_es_switch_view)
+                print('Checking in-built text_fi analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_fi, analyzers.text_fi_switch_view)
+                print('Checking in-built text_fr analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_fr, analyzers.text_fr_switch_view)
+                print('Checking in-built text_it analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_it, analyzers.text_it_switch_view)
+                print('Checking in-built text_nl analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_nl, analyzers.text_nl_switch_view)
+                print('Checking in-built text_no analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_no, analyzers.text_no_switch_view)
+                print('Checking in-built text_pt analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_pt, analyzers.text_pt_switch_view)
+                print('Checking in-built text_ru analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_ru, analyzers.text_ru_switch_view)
+                print('Checking in-built text_sv analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_sv, analyzers.text_sv_switch_view)
+                print('Checking in-built text_zh analyzer \n')
+                analyzers.select_analyzer_to_check(analyzers.text_zh, analyzers.text_zh_switch_view)
 
-            print('Hiding in-built Analyzers list \n')
-            analyzers.select_built_in_analyzers_close()
+                print('Hiding in-built Analyzers list \n')
+                analyzers.select_built_in_analyzers_close()
 
-            print('Adding Identity analyzer \n')
-            analyzers.add_new_analyzer('My_Identity_Analyzer', 0, 12)  # 12 represents required div_id in the method
+                # TODO need to create 23 checkdata makedata analyzer on RTA before proceed with this test
+                print('Adding Identity analyzer \n')
+                analyzers.add_new_analyzer('My_Identity_Analyzer', 0, 104)  # 104 represents required div_id
 
-            print('Adding Delimiter analyzer \n')
-            analyzers.add_new_analyzer('My_Delimiter_Analyzer', 1, 16)
+                print('Adding Delimiter analyzer \n')
+                analyzers.add_new_analyzer('My_Delimiter_Analyzer', 1, 108)
 
-            print('Adding Stem analyzer \n')
-            analyzers.add_new_analyzer('My_Stem_Analyzer', 2, 20)
+                print('Adding Stem analyzer \n')
+                analyzers.add_new_analyzer('My_Stem_Analyzer', 2, 112)
 
-            print('Adding Norm analyzer \n')
-            analyzers.add_new_analyzer('My_Norm_Analyzer', 3, 24)
+                print('Adding Norm analyzer \n')
+                analyzers.add_new_analyzer('My_Norm_Analyzer', 3, 116)
 
-            print('Adding N-Gram analyzer \n')
-            analyzers.add_new_analyzer('My_N-Gram_Analyzer', 4, 28)
+                print('Adding N-Gram analyzer \n')
+                analyzers.add_new_analyzer('My_N-Gram_Analyzer', 4, 120)
 
-            print('Adding Text analyzer \n')
-            analyzers.add_new_analyzer('My_Text_Analyzer', 5, 32)
+                print('Adding Text analyzer \n')
+                analyzers.add_new_analyzer('My_Text_Analyzer', 5, 124)
 
-            print('Adding AQL analyzer \n')
-            analyzers.add_new_analyzer('My_AQL_Analyzer', 6, 36)
+                print('Adding AQL analyzer \n')
+                analyzers.add_new_analyzer('My_AQL_Analyzer', 6, 128)
 
-            print('Adding Stopwords analyzer \n')
-            analyzers.add_new_analyzer('My_Stopwords_Analyzer', 7, 40)
+                print('Adding Stopwords analyzer \n')
+                analyzers.add_new_analyzer('My_Stopwords_Analyzer', 7, 132)
 
-            print('Adding Collation analyzer \n')
-            analyzers.add_new_analyzer('My_Collation_Analyzer', 8, 44)
+                print('Adding Collation analyzer \n')
+                analyzers.add_new_analyzer('My_Collation_Analyzer', 8, 136)
 
-            print('Adding Segmentation analyzer \n')
-            analyzers.add_new_analyzer('My_Segmentation_Alpha_Analyzer', 9, 48)
+                print('Adding Segmentation analyzer \n')
+                analyzers.add_new_analyzer('My_Segmentation_Alpha_Analyzer', 9, 140)
 
-            print('Adding Pipeline analyzer \n')
-            analyzers.add_new_analyzer('My_Pipeline_Analyzer', 10, 52)
+                if package_version >= semver.VersionInfo.parse('3.10.0'):
+                    print('Adding nearest-neighbor analyzer \n')
+                    analyzers.add_new_analyzer('My_Nearest_Neighbor_Analyzer', 10, 144)
 
-            print('Adding GeoJSON analyzer \n')
-            analyzers.add_new_analyzer('My_GeoJSON_Analyzer', 11, 56)
+                    print('Adding classification analyzer \n')
+                    analyzers.add_new_analyzer('My_Classification_Analyzer', 11, 148)
 
-            print('Adding GeoJSON analyzer \n')
-            analyzers.add_new_analyzer('My_GeoPoint_Analyzer', 12, 60)
+                    print('Adding Pipeline analyzer \n')
+                    analyzers.add_new_analyzer('My_Pipeline_Analyzer', 12, 152)
 
-            # only going to work if and only all the possible type of analyzers are done creating
-            print('Checking negative scenario for the identity analyzers name \n')
-            analyzers.test_analyzer_expected_error('identity_analyzer', 0, 64)
-            print('Checking negative scenario for the stem analyzers locale value \n')
-            analyzers.test_analyzer_expected_error('stem_analyzer', 2, 64)
-            print('Checking negative scenario for the stem analyzers locale value \n')
-            analyzers.test_analyzer_expected_error('n-gram_analyzer', 4, 64)
-            print('Checking negative scenario for the AQL analyzers \n')
-            analyzers.test_analyzer_expected_error('AQL_analyzer', 6, 64)
+                    print('Adding GeoJSON analyzer \n')
+                    analyzers.add_new_analyzer('My_GeoJSON_Analyzer', 13, 156)
 
-            print('Checking analyzer search filter options started \n')
-            analyzers.checking_search_filter_option('de')
-            analyzers.checking_search_filter_option('geo', False)  # false indicating builtIn option will be disabled
-            print('Checking analyzer search filter options completed \n')
+                    print('Adding GeoPoint analyzer \n')
+                    analyzers.add_new_analyzer('My_GeoPoint_Analyzer', 14, 160)
 
-            # analyzers deletion start
-            analyzers.delete_analyzer('My_AQL_Analyzer')
-            analyzers.delete_analyzer('My_Collation_Analyzer')
-            analyzers.delete_analyzer('My_Delimiter_Analyzer')
-            analyzers.delete_analyzer('My_GeoJSON_Analyzer')
-            analyzers.delete_analyzer('My_GeoPoint_Analyzer')
-            analyzers.delete_analyzer('My_Identity_Analyzer')
-            analyzers.delete_analyzer('My_N-Gram_Analyzer')
-            analyzers.delete_analyzer('My_Norm_Analyzer')
-            analyzers.delete_analyzer('My_Pipeline_Analyzer')
-            analyzers.delete_analyzer('My_Segmentation_Alpha_Analyzer')
-            analyzers.delete_analyzer('My_Stem_Analyzer')
-            analyzers.delete_analyzer('My_Stopwords_Analyzer')
-            analyzers.delete_analyzer('My_Text_Analyzer')
+                    print('Checking analyzer expected error scenario \n')
+                    analyzers.analyzer_expected_error_check(160)
 
-            login.logout_button()
-            del login
-            del analyzers
+                else:
+                    print('Adding Pipeline analyzer \n')
+                    analyzers.add_new_analyzer('My_Pipeline_Analyzer', 10, 144)
+
+                    print('Adding GeoJSON analyzer \n')
+                    analyzers.add_new_analyzer('My_GeoJSON_Analyzer', 11, 148)
+
+                    print('Adding GeoPoint analyzer \n')
+                    analyzers.add_new_analyzer('My_GeoJSON_Analyzer', 12, 152)
+
+                    analyzers.analyzer_expected_error_check(152)
+
+                print('Checking analyzer search filter options started \n')
+                analyzers.checking_search_filter_option('de')
+                analyzers.checking_search_filter_option('geo',
+                                                        False)  # false indicating builtIn option will be disabled
+                print('Checking analyzer search filter options completed \n')
+            else:
+                print("Analyzer test is not available version below 3.9.0 \n")
+
+        except BaseException:
+            print('x' * 45, "\nINFO: Error Occurred! Force Deletion Started\n", 'x' * 45)
+            self.exception = True  # mark the exception as true
+            self.error = traceback.format_exc()
+
+        finally:
+            if self.current_package_version() >= semver.VersionInfo.parse("3.9.0"):
+                print("Analyzer deletion started.")
+                analyzers.delete_analyzer('My_AQL_Analyzer')
+                analyzers.delete_analyzer('My_Collation_Analyzer')
+                analyzers.delete_analyzer('My_Delimiter_Analyzer')
+                analyzers.delete_analyzer('My_GeoJSON_Analyzer')
+                analyzers.delete_analyzer('My_GeoPoint_Analyzer')
+                analyzers.delete_analyzer('My_Identity_Analyzer')
+                analyzers.delete_analyzer('My_N-Gram_Analyzer')
+                analyzers.delete_analyzer('My_Norm_Analyzer')
+                analyzers.delete_analyzer('My_Pipeline_Analyzer')
+                analyzers.delete_analyzer('My_Segmentation_Alpha_Analyzer')
+                analyzers.delete_analyzer('My_Stem_Analyzer')
+                analyzers.delete_analyzer('My_Stopwords_Analyzer')
+                analyzers.delete_analyzer('My_Text_Analyzer')
+                analyzers.delete_analyzer('My_Nearest_Neighbor_Analyzer')
+                analyzers.delete_analyzer('My_Classification_Analyzer')
+
+                print("Analyzer deletion completed.")
+                del analyzers
             print("---------Analyzers Page Test Completed--------- \n")
-        else:
-            print("Analyzer test is not available version below 3.9.0 \n")
-
-        return 'analyzer'
+            if self.exception:
+                raise Exception(self.error)
 
     def test_query(self):
         print("---------Query Test Begin--------- \n")

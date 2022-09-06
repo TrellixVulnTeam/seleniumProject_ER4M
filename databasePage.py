@@ -1,5 +1,5 @@
 import time
-
+import traceback
 from selenium.common.exceptions import TimeoutException
 
 from baseSelenium import BaseSelenium
@@ -317,54 +317,66 @@ class DatabasePage(BaseSelenium):
 
     def deleting_database(self, db_name):
         """Deleting Database"""
-        self.driver.refresh()
+        try:
+            self.driver.refresh()
+            self.select_database_page()
 
-        print(f'{db_name} deleting started \n')
+            print(f'{db_name} deleting started \n')
+            if db_name == 'OneShard':
+                db_search = 'OneShard_edit-database'
+                db_sitem = BaseSelenium.locator_finder_by_id(self, db_search)
+                db_sitem.click()
 
-        if db_name == 'OneShard':
-            db_search = 'OneShard_edit-database'
-            db_sitem = BaseSelenium.locator_finder_by_id(self, db_search)
-            db_sitem.click()
+            if db_name == 'Sharded':
+                db_search = 'Sharded_edit-database'
+                db_sitem = BaseSelenium.locator_finder_by_id(self, db_search)
+                db_sitem.click()
 
-        if db_name == 'Sharded':
-            db_search = 'Sharded_edit-database'
-            db_sitem = BaseSelenium.locator_finder_by_id(self, db_search)
-            db_sitem.click()
+            delete_btn = 'modalButton1'
+            delete_btn_sitem = BaseSelenium.locator_finder_by_id(self, delete_btn)
+            delete_btn_sitem.click()
+            time.sleep(1)
 
-        delete_btn = 'modalButton1'
-        delete_btn_sitem = BaseSelenium.locator_finder_by_id(self, delete_btn)
-        delete_btn_sitem.click()
-        time.sleep(1)
+            delete_confirm_btn = 'modal-confirm-delete'
+            delete_confirm_btn_sitem = BaseSelenium.locator_finder_by_id(self, delete_confirm_btn)
+            delete_confirm_btn_sitem.click()
+            time.sleep(1)
 
-        delete_confirm_btn = 'modal-confirm-delete'
-        delete_confirm_btn_sitem = BaseSelenium.locator_finder_by_id(self, delete_confirm_btn)
-        delete_confirm_btn_sitem.click()
-        time.sleep(1)
+            self.driver.refresh()
 
-        self.driver.refresh()
-
-        print(f'{db_name} deleting completed \n')
+            print(f'{db_name} deleting completed \n')
+        except TimeoutException:
+            print('TimeoutException occurred! \n')
+            print('Info: Database has already been deleted or never created. \n')
+        except Exception:
+            raise Exception('Critical Error occurred and need manual inspection!! \n')
 
     def deleting_user(self, username):
         """Deleting users created for the Database test"""
-        self.driver.refresh()
-        print('Selecting user for deletion \n')
-        tester = "//h5[text()='tester (tester)']"
-        tester01 = "//h5[text()='tester01 (tester01)']"
-        if username == 'tester':
-            BaseSelenium.locator_finder_by_xpath(self, tester).click()
-        elif username == 'tester01':
-            BaseSelenium.locator_finder_by_xpath(self, tester01).click()
-        else:
-            raise Exception('Wrong user has been chosen for deletion!!! \n')
-        time.sleep(2)
+        try:
+            self.driver.refresh()
+            print('Selecting user for deletion \n')
+            tester = "//h5[text()='tester (tester)']"
+            tester01 = "//h5[text()='tester01 (tester01)']"
+            if username == 'tester':
+                BaseSelenium.locator_finder_by_xpath(self, tester).click()
+            elif username == 'tester01':
+                BaseSelenium.locator_finder_by_xpath(self, tester01).click()
+            else:
+                raise Exception('Wrong user has been chosen for deletion!!! \n')
+            time.sleep(2)
 
-        print(f'Deleting {username} begins \n')
-        del_button = 'modalButton0'
-        BaseSelenium.locator_finder_by_id(self, del_button).click()
+            print(f'Deleting {username} begins \n')
+            del_button = 'modalButton0'
+            BaseSelenium.locator_finder_by_id(self, del_button).click()
 
-        # confirming delete user
-        confirm_btn = 'modal-confirm-delete'
-        BaseSelenium.locator_finder_by_id(self, confirm_btn).click()
-        print(f'Deleting {username} completed \n')
-        time.sleep(2)
+            # confirming delete user
+            confirm_btn = 'modal-confirm-delete'
+            BaseSelenium.locator_finder_by_id(self, confirm_btn).click()
+            print(f'Deleting {username} completed \n')
+            time.sleep(2)
+        except TimeoutException:
+            print('TimeoutException occurred! \n')
+            print('Info: User has already been deleted or never created. \n')
+        except Exception:
+            raise Exception('Critical Error occurred and need manual inspection!! \n')
